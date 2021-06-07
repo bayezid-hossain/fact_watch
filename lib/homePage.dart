@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:fact_watch/individual_news.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'constants.dart' as constants;
@@ -8,7 +7,7 @@ import 'functionalities.dart';
 import 'homepageData.dart';
 import 'package:ff_navigation_bar/ff_navigation_bar.dart';
 import 'News.dart';
-import 'networking/background_task.dart';
+
 
 class HomePage extends StatefulWidget {
   @override
@@ -28,11 +27,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    try {
-      BackgroundTask.isForeground = state == AppLifecycleState.resumed;
-    } catch (e) {
-      print(e);
-    }
+
     if (AppLifecycleState.resumed == state)
       setState(() {
         //searching = searching;
@@ -160,7 +155,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         body: PageView(
           children: [
             HomePageData(searchContent, length),
-            //IndividualNews(Functionalities.allNews[0]),
+            HomePageData(jsonEncode(Functionalities.getNewsByCategory(278)),Functionalities.getNewsByCategory(278).length),
+            //IndividualNews(Functionalities.allNews[0]),Indiv
           ],
           onPageChanged: onPageChanged,
           controller: _pageController,

@@ -1,3 +1,4 @@
+import 'package:fact_watch/categorizedNewsPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
@@ -5,8 +6,9 @@ Icon getIcon(IconData icon) {
   return Icon(icon, size: 25, color: Colors.black);
 }
 
-InkWell getNormalRow(String text, [Function? function, bool subMenu = false]) {
+InkWell getNormalRow(String text, VoidCallback function, [ bool subMenu = false]) {
   return InkWell(
+    onTap: function,
     child: Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -67,8 +69,12 @@ Drawer getDrawer(BuildContext context) {
           height: 20,
           color: Colors.blue,
         ),
-        getNormalRow("হোম", () {}),
-        getNormalRow("ইন্টারনেট গুজব", () {}),
+        getNormalRow("হোম", () {Navigator.pop(context);}),
+        getNormalRow("তথ্য যাচাই", () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => CategorizedNews(261)));
+        }
+  ),
         // ExpansionTile(
         //   initiallyExpanded: true,
         //   childrenPadding: EdgeInsets.only(left: 18),
@@ -86,9 +92,14 @@ Drawer getDrawer(BuildContext context) {
         //     getNormalRow("লেখাজোখা", () {}, true),
         //   ],
         // ),
-        getNormalRow("ফ্যাক্ট ফাইল"),
-        getNormalRow("লেখাজোখা"),
-        getNormalRow("ফ্যাক্টওয়াচ ভিডিও", () {}),
+        getNormalRow("ফ্যাক্ট ফাইল",(){Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CategorizedNews(283)));}),
+             getNormalRow("বিজ্ঞাপন যাচাই", () {Navigator.push(context,
+                 MaterialPageRoute(builder: (context) => CategorizedNews(277)));}),
+        getNormalRow("লেখাজোখা",(){Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CategorizedNews(259)));}),
+        getNormalRow("ফ্যাক্টওয়াচ ভিডিও", () {Navigator.push(context,
+            MaterialPageRoute(builder: (context) => CategorizedNews(278)));}),
         ExpansionTile(
           initiallyExpanded: true,
           childrenPadding: EdgeInsets.only(left: 18),
@@ -101,9 +112,12 @@ Drawer getDrawer(BuildContext context) {
             ),
           ),
           children: [
-            getNormalRow("করোনা তথ্য যাচাই", () {}, true),
-            getNormalRow("জন উদ্যোগ", () {}, true),
-            getNormalRow("জরুরি পরামর্শ", () {}, true),
+            getNormalRow("করোনা তথ্য যাচাই", () {Navigator.push(context,
+                MaterialPageRoute(builder: (context) => CategorizedNews(271)));}, true),
+            getNormalRow("জন উদ্যোগ", () {Navigator.push(context,
+                MaterialPageRoute(builder: (context) => CategorizedNews(255)));}, true),
+            getNormalRow("জরুরি পরামর্শ", () {Navigator.push(context,
+                MaterialPageRoute(builder: (context) => CategorizedNews(265)));}, true),
           ],
         ),
         Divider(
@@ -111,13 +125,16 @@ Drawer getDrawer(BuildContext context) {
           color: Colors.blue,
         ),
 
-        getNormalRow("আমাদের সম্পর্কে"),
-        getNormalRow("ফ্যাক্টওয়াচ টিম"),
-        getNormalRow("কাজের পদ্ধতি"),
-        getNormalRow("নিরপেক্ষতা নীতি"),
-        getNormalRow("সংশোধন ও অভিযোগ নীতি"),
-        getNormalRow("অর্থকড়ি আসে কিভাবে"),
+        getNormalRow("আমাদের সম্পর্কে",(){}),
+        getNormalRow("ফ্যাক্টওয়াচ টিম",(){}),
+        getNormalRow("কাজের পদ্ধতি",(){}),
+        getNormalRow("নিরপেক্ষতা নীতি",(){}),
+        getNormalRow("সংশোধন ও অভিযোগ নীতি",(){}),
+        getNormalRow("অর্থকড়ি আসে কিভাবে",(){}),
       ],
     ),
   );
+}
+void goto_categorizedNews(int id){
+
 }

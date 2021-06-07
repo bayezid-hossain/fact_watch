@@ -10,9 +10,9 @@ import 'functionalities.dart';
 import 'add_comments_screen.dart';
 import 'Comment.dart';
 import 'networking/networking.dart';
-
 class IndividualNews extends StatefulWidget {
   final News news;
+
   IndividualNews(this.news);
 
   @override
@@ -21,6 +21,8 @@ class IndividualNews extends StatefulWidget {
 
 class _IndividualNewsState extends State<IndividualNews> {
   List<Comment> comments = [];
+  int tableIndex=1;
+  //double width = MediaQuery. of(widget.context). size. width;
   @override
   void initState() {
     // TODO: implement initState
@@ -32,7 +34,9 @@ class _IndividualNewsState extends State<IndividualNews> {
 
   @override
   Widget build(BuildContext context) {
-    widget.news.description.replaceAll("Published on: ${widget.news.date}", "");
+    int totalTables="<table".allMatches(widget.news.description).length;
+
+    widget.news.description.replaceAll("Published on: ${widget.news.date}", "").replaceAll("width: 113.211%", "");
 
     return Scaffold(
       appBar: AppBar(
@@ -78,7 +82,43 @@ class _IndividualNewsState extends State<IndividualNews> {
                   child: Icon(
                     Icons.bookmark_border,
                     size: 22,
+                    color: Functionalities.favoriteNews.contains(widget.news.id)?Colors.amberAccent:Colors.black,
+
                   ),
+                  onTap: ()  {
+                    if(Functionalities.favoriteNews.contains(widget.news.id))showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return AlertDialog(
+                          title: Text("Are you sure you want to remove this news from Bookmark?"),
+
+                          actions: <Widget>[
+                            TextButton(
+                              child: Text("Yes"),
+                              onPressed: () {
+                                Navigator.pop(context, "ok");
+                              },
+                            ),TextButton(
+                              child: Text("No"),
+                              onPressed: () {
+                                Navigator.pop(context, "no");
+                              },
+                            )
+                          ],
+                        );
+                      },
+                    ).then((val) {
+                      setState(() {
+                        if(val=='ok')Functionalities.favoriteNews.remove(widget.news.id);
+
+                      });
+                    });
+                    else{
+                      setState(() {
+                        Functionalities.favoriteNews.add(widget.news.id);
+                      });
+                    }
+                    },
                 ),
               ],
             )
@@ -160,17 +200,20 @@ class _IndividualNewsState extends State<IndividualNews> {
                       Center(
                         child: new Html(
                           data: widget.news.description,
-                          onLinkTap: (url) {
-                            Functionalities.launchURL(url);
+                          onLinkTap: (url,_,__,___) {
+                            Functionalities.launchURL(url!);
                           },
                           style: {
                             // tables will have the below background color
                             "table": Style(
+
                               backgroundColor: Colors.white,
                               //width: 1000,
-                              border: Border.all(color: Colors.grey),
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                              margin: EdgeInsets.all(10),
+
+                              width:MediaQuery. of(context). size. width,
+                              border: Border.all(color: Colors.white),
+                              padding: EdgeInsets.symmetric(vertical: 0),
+                              margin: EdgeInsets.symmetric(vertical:0),
                               wordSpacing: 0,
                               letterSpacing: 0.1,
                               //width: double.maxFinite,
@@ -178,14 +221,13 @@ class _IndividualNewsState extends State<IndividualNews> {
                             ),
                             // some other granular customizations are also possible
                             "tr": Style(
-                              border: Border(
-                                  bottom: BorderSide(color: Colors.grey)),
+
                               alignment: Alignment.center,
                               //width: double.infinity,
                             ),
                             "td": Style(
                               padding: EdgeInsets.symmetric(
-                                  vertical: 10, horizontal: 15),
+                                  vertical: 0, horizontal: 10),
                               alignment: Alignment.center,
                               //width: double.maxFinite,
                             ),
@@ -200,17 +242,16 @@ class _IndividualNewsState extends State<IndividualNews> {
                               color: Colors.black,
                             )
                           },
-                          blacklistedElements: ['width'],
+                          //blacklistedElements: ['width'],
                           customRender: {
-                            "img": (RenderContext context, Widget child,
-                                Map<String, String> attributes, _) {
-                              String originalPic = attributes['src'].toString();
+                            "img": (RenderContext context, Widget child) {
+                              String originalPic = context.tree.attributes['src'].toString();
                               try {
-                                if (double.parse(attributes['height'].toString()) < 300 &&
-                                    double.parse(attributes['width'].toString()) < 300) {
-                                  if (!attributes['src'].toString().contains('Stamping') &&
-                                      !attributes['src'].toString().contains('Logo')) {
-                                    String src = attributes['src'].toString();
+                                if (double.parse(context.tree.attributes['height'].toString()) < 300 &&
+                                    double.parse(context.tree.attributes['width'].toString()) < 300) {
+                                  if (!context.tree.attributes['src'].toString().contains('Stamping') &&
+                                      !context.tree.attributes['src'].toString().contains('Logo')) {
+                                    String src = context.tree.attributes['src'].toString();
                                     String imageName = src.substring(
                                         src.lastIndexOf('/'), src.length);
                                     imageName = imageName.substring(
@@ -225,16 +266,34 @@ class _IndividualNewsState extends State<IndividualNews> {
                                   }
                                 }
                                 //print(originalPic);
+
                                 return InteractiveViewsImage(
-                                    attributes, originalPic);
+                                    context.tree.attributes, originalPic);
                               } catch (e) {
                                 print(e);
                                 // print(attributes['src']);
                                 // print(originalPic);
                                 return InteractiveViewsImage(
-                                    attributes, attributes['src'].toString());
+                                    context.tree.attributes, context.tree.attributes['src'].toString());
                               }
                             },
+                            "table": (RenderContext context, Widget child,) {
+                              print("$totalTables,$tableIndex");
+                              if(tableIndex==1 || tableIndex==totalTables){
+                                tableIndex++;
+                                return (context.tree as TableLayoutElement).toWidget(context);
+                              }
+                              tableIndex++;
+                              return SingleChildScrollView(
+                                scrollDirection: Axis.horizontal,
+                                child: Container(child:(context.tree as TableLayoutElement).toWidget(context),
+                                padding: EdgeInsets.all(5),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                ),),
+                                clipBehavior: Clip.antiAliasWithSaveLayer,
+                              );
+                            }
                           },
                         ),
                       ),
@@ -267,32 +326,56 @@ class _IndividualNewsState extends State<IndividualNews> {
   }
 }
 
-class InteractiveViewsImage extends StatelessWidget {
+class InteractiveViewsImage extends StatefulWidget {
   final Map<String, String> attributes;
   final String src;
   InteractiveViewsImage(this.attributes, this.src);
+
+  @override
+  _InteractiveViewsImageState createState() => _InteractiveViewsImageState();
+}
+
+class _InteractiveViewsImageState extends State<InteractiveViewsImage> {
   @override
   Widget build(BuildContext context) {
+    bool panEnabled=false;
     // print(src);
     // print(attributes['src']);
+
     return InteractiveViewer(
-      minScale: .1,
+      minScale: 1,
+      onInteractionUpdate: (ScaleUpdateDetails scal){
+        var myScale=scal.scale;
+        if(myScale>1 && panEnabled==false){
+          setState(() {
+            panEnabled=true;
+          });
+        }
+        else if(myScale<=1 && panEnabled==true){
+          setState(() {
+            panEnabled=false;
+          });
+        }
+      },
+      panEnabled: panEnabled,
       maxScale: 2.5,
+      scaleEnabled: true,
+      constrained: true,
       boundaryMargin: EdgeInsets.all(40),
       child: Center(
         child: Container(
           decoration: BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(2.0)),
-            border: (!src.contains("Stamping") && !src.contains('Logo'))
+            border: (!widget.src.contains("Stamping") && !widget.src.contains('Logo'))
                 ? Border.all(
                     width: 1,
                     color: Colors.blueAccent,
                   )
                 : null,
           ),
-          height: (double.parse(attributes['height'].toString()) > 600)
+          height: (double.parse(widget.attributes['height'].toString()) > 600)
               ? 600
-              : double.parse(attributes['height'].toString()),
+              : double.parse(widget.attributes['height'].toString()),
           child: Padding(
             padding: EdgeInsets.symmetric(vertical: 15),
             child: CachedNetworkImage(
@@ -305,15 +388,15 @@ class InteractiveViewsImage extends StatelessWidget {
               ),
               errorWidget: (context, url, error) => Icon(Icons.error),
               fit: BoxFit.fill,
-              imageUrl: src,
-              width: attributes['src'].toString().contains("Stamping")
+              imageUrl: widget.src,
+              width: widget.attributes['src'].toString().contains("Stamping")
                   ? 80
-                  : double.parse(attributes['width'].toString()),
-              height: attributes['src'].toString().contains("Stamping")
+                  : double.parse(widget.attributes['width'].toString()),
+              height: widget.attributes['src'].toString().contains("Stamping")
                   ? 80
-                  : ((double.parse(attributes['height'].toString()) < 400)
+                  : ((double.parse(widget.attributes['height'].toString()) < 400)
                       ? 600
-                      : double.parse(attributes['height'].toString())),
+                      : double.parse(widget.attributes['height'].toString())),
             ),
           ),
         ),
@@ -325,7 +408,7 @@ class InteractiveViewsImage extends StatelessWidget {
 Future<List<Comment>> getComments(News news) async {
   List<Comment> comments = [];
   var _comments = await NetworkHelper(
-          'https://www.fact-watch.org/web/wp-json/wp/v2/comments?post=2748&_fields=author_name,author_url,date,content')
+          'https://www.fact-watch.org/web/wp-json/wp/v2/comments?post=${news.id}&_fields=author_name,author_url,date,content')
       .getData();
   for (var comment in _comments) {
     comments.add(Comment(comment['author_name'], comment['author_url'],
@@ -333,3 +416,4 @@ Future<List<Comment>> getComments(News news) async {
   }
   return comments;
 }
+

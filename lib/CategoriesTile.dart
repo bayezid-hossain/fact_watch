@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'small_card.dart';
+import 'categorizedNewsPage.dart';
 import 'functionalities.dart';
 import 'News.dart';
 import 'dart:convert';
@@ -10,7 +11,7 @@ class CategoriesTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<dynamic> categories = jsonDecode(news.categories);
-    return Padding(
+    if(categories!=null)return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Container(
         height: 25,
@@ -26,8 +27,14 @@ class CategoriesTile extends StatelessWidget {
                   itemBuilder: (context, index) {
                     int ind = categories[index];
                     if (ind != 302 && ind != 1 && ind != 317) {
-                      return SmallCard(
-                          Functionalities.categories![categories[index]].toString());
+                      return InkWell(
+                        onTap: (){
+    Navigator.push(context,
+    MaterialPageRoute(builder: (context) => CategorizedNews(categories[index])));
+    },
+                        child: SmallCard(
+                            Functionalities.categories[categories[index]].toString()),
+                      );
                     } else
                       return Text("");
                   }),
@@ -36,5 +43,6 @@ class CategoriesTile extends StatelessWidget {
         ),
       ),
     );
+    else return Container();
   }
 }

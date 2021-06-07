@@ -1,3 +1,5 @@
+
+
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -16,16 +18,19 @@ class Functionalities {
   static Map<int, News> newsMap = {};
   static Map<int, String> categories = {};
   static String initialContent = "";
-  static void saveLastNewsId(int id) async {
+  static List<int> favoriteNews=[];
+  static  saveLastNewsId(int id) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt("lastId", id);
   }
 
-  static void mapNews() async {
+  static mapNews() async {
     newsMap.clear();
     for (News news in allNews) {
       newsMap[news.id] = news;
     }
+
+
   }
 
   static List<News> getNewsByCategory(int id) {
@@ -37,7 +42,7 @@ class Functionalities {
     return categorizedNews;
   }
 
-  static void getSelectedNews() async {
+  static getSelectedNews() async {
     var newsIds = await NetworkHelper(
             'https://www.fact-watch.org/web/wp-json/wp/v2/posts?per_page=100&_fields=id')
         .getData();
@@ -54,7 +59,7 @@ class Functionalities {
 
     if (query != "") {
       var newNews = await NetworkHelper(
-              'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
+              'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
           .getData();
        formatNews(newNews);
        mapNews();
@@ -62,8 +67,8 @@ class Functionalities {
 
     Functionalities.allNews.addAll(previousNews);
     // print(Functionalities.allNews.toString());
-    Functionalities.saveLastNewsId(Functionalities.allNews[0].id);
-     Functionalities.writeInitialContent(Functionalities.allNews);
+    await Functionalities.saveLastNewsId(Functionalities.allNews[0].id);
+    await Functionalities.writeInitialContent(Functionalities.allNews);
   }
 
   static void formatNews(var rawNews) {
@@ -136,19 +141,19 @@ class Functionalities {
     }
   }
 
-  static void getInitNews() async {
+  static Future<void> getInitNews() async {
     var newsData = await NetworkHelper(
             'https://www.fact-watch.org/web/wp-json/wp/v2/posts?per_page=100&_fields=categories,id,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
         .getData();
 
     formatNews(newsData);
-     saveLastNewsId(Functionalities.allNews[0].id);
-     saveFirstRun();
-     writeInitialContent(Functionalities.allNews);
-     mapNews();
+     await saveLastNewsId(Functionalities.allNews[0].id);
+     await saveFirstRun();
+     await writeInitialContent(Functionalities.allNews);
+     await mapNews();
   }
 
-  static void writeInitialContent(var news) async {
+  static  writeInitialContent(var news) async {
     try {
       final file = await _localFile;
 
@@ -162,9 +167,10 @@ class Functionalities {
   static getNews() async {
     initialContent = await getInitialContent();
     if (initialContent != "")
-       getSelectedNews();
+      await getSelectedNews();
     else
-       getInitNews();
+       await getInitNews();
+    mapNews();
     // bool firstRun = await checkFirstRun();
     // try {
     //   initialContent = await getInitialContent();
@@ -193,7 +199,7 @@ class Functionalities {
     return firstRun;
   }
 
-  static void saveFirstRun() async {
+  static saveFirstRun() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool("firstRun", false);
   }

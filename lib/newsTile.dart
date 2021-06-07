@@ -12,6 +12,7 @@ class NewsTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     print(news.categories);
+    news.excerpt=news.excerpt.replaceAll("Published on: ","");
     return InkWell(
       splashColor: Colors.blueAccent,
       onTap: () {

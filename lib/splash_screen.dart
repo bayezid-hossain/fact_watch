@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:fact_watch/individual_news.dart';
 import 'package:fact_watch/main.dart';
-import 'package:fact_watch/networking/background_task.dart';
+
 import 'package:flutter/services.dart';
 
 import 'functionalities.dart';
@@ -32,11 +32,7 @@ class _SplashScreenState extends State<SplashScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    try {
-      BackgroundTask.isForeground = state == AppLifecycleState.resumed;
-    } catch (e) {
-      print(e);
-    }
+
   }
 
   @override
@@ -58,10 +54,11 @@ class _SplashScreenState extends State<SplashScreen>
 
   void startApp() async {
     firstRun = await Functionalities.checkFirstRun();
-    await BackgroundTask.initPlatformState();
+    print(firstRun);
+
     await Functionalities.getNews();
     await Functionalities.getCategories();
-    BackgroundTask.plugin.setOnNotificationClick(onClick);
+
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (context) => HomePage()));
   }
