@@ -30,6 +30,6 @@ class _CategorizedNewsState extends State<CategorizedNews> {
           fit: BoxFit.fill,
         ),
       ),
-    ),body: HomePageData(jsonEncode(categorizedNews),categorizedNews.length));
+    ),body: HomePageData(jsonEncode(categorizedNews),categorizedNews.length,"",widget.id.toString()));
   }
 }

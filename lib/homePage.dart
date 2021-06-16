@@ -21,6 +21,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   int index = 0;
   static int length=0;
   static String content="";
+  static String searchText="";
   String searchContent = "";
   PageController _pageController=new PageController();
   static List<News> newsToShow=[];
@@ -154,8 +155,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
         body: PageView(
           children: [
-            HomePageData(searchContent, length),
-            HomePageData(jsonEncode(Functionalities.getNewsByCategory(278)),Functionalities.getNewsByCategory(278).length),
+            HomePageData(searchContent, length,searchText,""),
+            HomePageData(jsonEncode(Functionalities.getNewsByCategory(278)),Functionalities.getNewsByCategory(278).length,"","278"),
             //IndividualNews(Functionalities.allNews[0]),Indiv
           ],
           onPageChanged: onPageChanged,
@@ -184,16 +185,16 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOutCubic);
   }
-
-  void searchNewsByCategory(String query) {
-    final news = Functionalities.allNews.where((news) {
-      return news.categories.toLowerCase().contains(query.toLowerCase());
-    }).toList();
-    setState(() {
-      newsToShow = news;
-      length = news.length;
-    });
-  }
+  //
+  // void searchNewsByCategory(String query) {
+  //   final news = Functionalities.allNews.where((news) {
+  //     return news.categories.toLowerCase().contains(query.toLowerCase());
+  //   }).toList();
+  //   setState(() {
+  //     newsToShow = news;
+  //     length = news.length;
+  //   });
+  // }
 
   void searchNewsByTitle(String query) {
     if (newsToShow.length == 0) {
@@ -207,6 +208,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
       });
       return;
     }
+    searchText=query;
     final news = newsToShow.where((news) {
       return news.title.toLowerCase().contains(query.toLowerCase());
     }).toList();

@@ -7,14 +7,17 @@ import 'package:flutter_html/flutter_html.dart';
 import 'News.dart';
 import 'newsTile.dart';
 import 'newsTileSmall.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class HomePageData extends StatelessWidget {
   final String content;
   final int length;
-  HomePageData(this.content, this.length);
+  final String searchText,searchCategory;
+  HomePageData(this.content, this.length,[this.searchText="",this.searchCategory=""]);
+
+
   @override
   Widget build(BuildContext context) {
+
     var tagObjsJson = jsonDecode(content) as List;
     List<News> news = tagObjsJson.map((e) => News.fromJson(e)).toList();
 
@@ -29,8 +32,62 @@ class HomePageData extends StatelessWidget {
                 itemCount: length + 1,
                 itemBuilder: (context, index) {
                   if (index == length) {
-                    return Card(
-                      child: Row(
+                    return Column(
+                      children: [Column(
+                        children: [
+
+                          if(searchCategory!="")FutureBuilder(
+                              future: Functionalities.fetchNewsByCategory(int.parse(searchCategory)),
+                              builder:(context, AsyncSnapshot snapshot) {
+                                if (!snapshot.hasData) {
+                                  return SizedBox(child: Center(child: CircularProgressIndicator(),),height: 50,);
+                                } else {
+                                  return ListView.builder(
+                                    shrinkWrap: true,
+                                      itemCount: (snapshot as AsyncSnapshot).data.length,
+                                      itemBuilder: (BuildContext context, int index) {
+                                        try {
+                                          return NewsExample(
+                                            news: snapshot.data[index],
+                                            big: ((index % 5) == 0) ? true : false,
+                                          );
+                                        } catch (e) {
+                                          print(e);
+                                          return SizedBox();
+                                        }
+                                      }
+                                  );
+                                }
+                              }
+                          ),
+                          if(searchText!="")FutureBuilder(
+                          future: Functionalities.fetchNewsBySearch(searchText),
+                           builder:(context, AsyncSnapshot snapshot) {
+                              if (!snapshot.hasData) {
+                              return SizedBox(child: Center(child: CircularProgressIndicator(),),height: 50,);
+                              }
+                              else {
+                              return ListView.builder(
+                                shrinkWrap: true,
+                                physics: ClampingScrollPhysics(),
+                                itemCount: (snapshot as AsyncSnapshot).data.length,
+                                itemBuilder: (BuildContext context, int index) {
+                                  try {
+                                    return NewsExample(
+                                      news: snapshot.data[index],
+                                      big: ((index % 5) == 0) ? true : false,
+                                    );
+                                  } catch (e) {
+                                print(e);
+                                return SizedBox();
+                                  }
+                                  }
+                                );
+                               }
+                              }
+                              ),
+                        ],
+                      ),Row(
                         // mainAxisSize: MainAxisSize.max,
                         // crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -44,7 +101,7 @@ class HomePageData extends StatelessWidget {
                           )
                         ],
                       ),
-                    );
+                    ]);
                   } else
                     try {
                       return NewsExample(
@@ -214,3 +271,4 @@ Widget _buildStack() => Stack(
         ),
       ],
     );
+

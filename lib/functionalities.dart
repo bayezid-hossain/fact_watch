@@ -71,7 +71,8 @@ class Functionalities {
     await Functionalities.writeInitialContent(Functionalities.allNews);
   }
 
-  static void formatNews(var rawNews) {
+  static List<News> formatNews(var rawNews) {
+    List<News> newNews=[];
     for (var singleNews in rawNews) {
       int id;
       String title, excerpt, date;
@@ -112,7 +113,10 @@ class Functionalities {
       }
       Functionalities.allNews.add(News(id: id, title: title,excerpt:  excerpt,mediaLinkLarge:  mediumLarge,
           thumbnail: thumbnail,date:  date,description:  content, categories: categories,fav: false));
+      newNews.add(News(id: id, title: title,excerpt:  excerpt,mediaLinkLarge:  mediumLarge,
+          thumbnail: thumbnail,date:  date,description:  content, categories: categories,fav: false));
     }
+    return newNews;
   }
 
   static Future<int?> getLastNewsId() async {
@@ -151,6 +155,66 @@ class Functionalities {
      await saveFirstRun();
      await writeInitialContent(Functionalities.allNews);
      await mapNews();
+  }
+  static Future<List<News>> fetchNewsBySearch(String searchText)async{
+    List<News> searchResult=[];
+    List<dynamic> newsIds = await NetworkHelper(
+        'https://www.fact-watch.org/web/wp-json/wp/v2/posts?search=$searchText&per_page=100&_fields=id')
+        .getData();
+    List<int> intList = newsIds.map((s) => s['id'] as int).toList();
+    allNews.forEach((element) {
+      if(intList.contains(element.id))intList.remove(element.id);
+    });
+    int loopSize=(intList.length/10).toInt();
+    for(int i=0;i<loopSize+1;i++){
+      String query = "";
+      for (var id in intList) {
+
+        query += "include[]=${id}&";
+      }
+      if (query != "") {
+        var newNews = await NetworkHelper(
+            'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
+            .getData();
+        searchResult.addAll(formatNews(newNews));
+
+        await writeInitialContent(Functionalities.allNews);
+        mapNews();
+      }
+    }
+    return searchResult;
+  }
+
+  static Future<List<News>> fetchNewsByCategory(int id)async {
+    List<News> searchResult=[];
+    List<dynamic> newsIds = await NetworkHelper(
+        'https://www.fact-watch.org/web/wp-json/wp/v2/posts?categories=$id&per_page=100&_fields=id')
+        .getData();
+
+
+    List<int> intList = newsIds.map((s) => s['id'] as int).toList();
+    getNewsByCategory(id).forEach((element) {
+      if(intList.contains(element.id))intList.remove(element.id);
+    });
+    int loopSize=(intList.length/10).toInt();
+    for(int i=0;i<loopSize+1;i++){
+      String query = "";
+    for (var id in intList) {
+
+      query += "include[]=${id}&";
+    }
+    if (query != "") {
+      var newNews = await NetworkHelper(
+          'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
+          .getData();
+      searchResult.addAll(formatNews(newNews));
+
+      await writeInitialContent(Functionalities.allNews);
+      mapNews();
+    }
+    }
+    return searchResult;
+
   }
 
   static  writeInitialContent(var news) async {
