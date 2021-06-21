@@ -104,7 +104,7 @@ class Functionalities {
           .replaceAll("&#8217;", " ")
           .replaceAll("&#8216;", " ");
       String categories = singleNews['categories'].toString();
-      print(categories);
+    //  print(categories);
       var thumbnail, mediumLarge;
       try {
         thumbnail = singleNews['_embedded']['wp:featuredmedia'][0]

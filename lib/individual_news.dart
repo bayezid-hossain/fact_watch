@@ -243,7 +243,7 @@ class _IndividualNewsState extends State<IndividualNews> {
                                 }
                               },
                               "table": (RenderContext context, Widget child,) {
-                                print("$totalTables,$tableIndex");
+                                //print("$totalTables,$tableIndex");
                                 if(tableIndex==1 || tableIndex==totalTables){
                                   tableIndex++;
                                   return (context.tree as TableLayoutElement).toWidget(context);

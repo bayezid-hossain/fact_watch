@@ -20,7 +20,7 @@ class _AddCommentsScreenState extends State<AddCommentsScreen> {
   late String commentText;
   @override
   Widget build(BuildContext context) {
-    print(MediaQuery.of(context).padding.bottom);
+    //print(MediaQuery.of(context).padding.bottom);
     return Container(
       padding: EdgeInsets.only(
         top: 20,

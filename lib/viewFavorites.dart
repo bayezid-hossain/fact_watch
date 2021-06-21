@@ -189,7 +189,7 @@ class _ViewFavoritesState extends State<ViewFavorites> with RouteAware{
                                                 },
                                               ).then((val) { if(val=='ok'){Functionalities.favoriteNews.remove(news[index]!.id);
 
-                                              print(news);
+                                              //print(news);
 
                                               };
                                               setState(() {
@@ -365,7 +365,7 @@ class _ViewFavoritesState extends State<ViewFavorites> with RouteAware{
                                                      },
                                                    ).then((val) { if(val=='ok'){Functionalities.favoriteNews.remove(news[index]!.id);
 
-                                                   print(news);
+                                                  // print(news);
 
                                                    };
                                                    setState(() {

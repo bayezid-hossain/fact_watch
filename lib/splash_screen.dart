@@ -54,7 +54,7 @@ class _SplashScreenState extends State<SplashScreen>
 
   void startApp() async {
     firstRun = await Functionalities.checkFirstRun();
-    print(firstRun);
+   // print(firstRun);
 
     await Functionalities.getNews();
     await Functionalities.getCategories();
