@@ -10,8 +10,9 @@ import 'functionalities.dart';
 import 'add_comments_screen.dart';
 import 'Comment.dart';
 import 'networking/networking.dart';
+import 'favoriteButton.dart';
 class IndividualNews extends StatefulWidget {
-  final News news;
+  final News? news;
 
   IndividualNews(this.news);
 
@@ -34,291 +35,256 @@ class _IndividualNewsState extends State<IndividualNews> {
 
   @override
   Widget build(BuildContext context) {
-    int totalTables="<table".allMatches(widget.news.description).length;
+    int totalTables="<table".allMatches(widget.news!.description).length;
+    bool initFav=Functionalities.favoriteNews.favoriteNews.contains(widget.news!.id);
+    widget.news!.description.replaceAll("Published on: ${widget.news!.date}", "").replaceAll("width: 113.211%", "");
 
-    widget.news.description.replaceAll("Published on: ${widget.news.date}", "").replaceAll("width: 113.211%", "");
-
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(
-          color: Colors.black, //change your color here
-        ),
-        backgroundColor: Colors.white,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  "Published on: ${widget.news.date}",
-                  style: TextStyle(
-                    fontSize: 12,
-                  ),
-                ),
-              ],
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                InkWell(
-                  child: Icon(
-                    Icons.share,
-                    size: 22,
-                  ),
-                  onTap: () {
-                    final RenderBox box = context.findRenderObject() as RenderBox;
-                    Share.share(
-                        "${widget.news.title}\nLink: https://www.fact-watch.org/web/?p=${widget.news.id}",
-                        subject: widget.news.title,
-                        sharePositionOrigin:
-                            box.localToGlobal(Offset.zero) & box.size);
-                  },
-                ),
-                SizedBox(
-                  width: 25,
-                ),
-                InkWell(
-                  child: Icon(
-                    Icons.bookmark_border,
-                    size: 22,
-                    color: Functionalities.favoriteNews.contains(widget.news.id)?Colors.amberAccent:Colors.black,
-
-                  ),
-                  onTap: ()  {
-                    if(Functionalities.favoriteNews.contains(widget.news.id))showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          title: Text("Are you sure you want to remove this news from Bookmark?"),
-
-                          actions: <Widget>[
-                            TextButton(
-                              child: Text("Yes"),
-                              onPressed: () {
-                                Navigator.pop(context, "ok");
-                              },
-                            ),TextButton(
-                              child: Text("No"),
-                              onPressed: () {
-                                Navigator.pop(context, "no");
-                              },
-                            )
-                          ],
-                        );
-                      },
-                    ).then((val) {
-                      setState(() {
-                        if(val=='ok')Functionalities.favoriteNews.remove(widget.news.id);
-
-                      });
-                    });
-                    else{
-                      setState(() {
-                        Functionalities.favoriteNews.add(widget.news.id);
-                      });
-                    }
-                    },
-                ),
-              ],
-            )
-          ],
-        ),
-      ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
+    return WillPopScope(
+      onWillPop: () async{
+        Navigator.pop(context,(initFav==Functionalities.favoriteNews.favoriteNews.contains(widget.news!.id))?false:true);
+        return  false;
+      },
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: IconThemeData(
+            color: Colors.black, //change your color here
+          ),
+          backgroundColor: Colors.white,
+          title: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: <Widget>[
-              Theme(
-                data: Theme.of(context).copyWith(
-                  dividerColor: Colors.transparent,
-                ),
-                child: Card(
-                  margin: EdgeInsets.symmetric(vertical: 5),
-                  elevation: 0,
-                  // shape: new RoundedRectangleBorder(
-                  //     side: new BorderSide(color: Colors.transparent),
-                  //     borderRadius: BorderRadius.circular(20.0)),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 10, vertical: 15),
-                        child: Text(
-                          widget.news.title,
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            fontStyle: FontStyle.italic,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      if (widget.news.mediaLinkLarge != null)
-                        ClipRRect(
-                          borderRadius: BorderRadius.only(
-                            topLeft: Radius.circular(8),
-                            topRight: Radius.circular(8),
-                          ),
-                          child: CachedNetworkImage(
-                            imageUrl: widget.news.mediaLinkLarge,
-                            fit: BoxFit.fill,
-                            placeholder: (context, url) => Center(
-                              child: SizedBox(
-                                width: 40.0,
-                                height: 40.0,
-                                child: new CircularProgressIndicator(),
-                              ),
-                            ),
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
-                          ),
-                        ),
-                      Padding(
-                        padding: EdgeInsets.fromLTRB(10, 10, 10, 15),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                Text(
-                                  "Published on: ${widget.news.date}",
-                                  style: TextStyle(
-                                    fontSize: 12,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Center(
-                        child: new Html(
-                          data: widget.news.description,
-                          onLinkTap: (url,_,__,___) {
-                            Functionalities.launchURL(url!);
-                          },
-                          style: {
-                            // tables will have the below background color
-                            "table": Style(
-
-                              backgroundColor: Colors.white,
-                              //width: 1000,
-
-                              width:MediaQuery. of(context). size. width,
-                              border: Border.all(color: Colors.white),
-                              padding: EdgeInsets.symmetric(vertical: 0),
-                              margin: EdgeInsets.symmetric(vertical:0),
-                              wordSpacing: 0,
-                              letterSpacing: 0.1,
-                              //width: double.maxFinite,
-                              alignment: Alignment.topRight,
-                            ),
-                            // some other granular customizations are also possible
-                            "tr": Style(
-
-                              alignment: Alignment.center,
-                              //width: double.infinity,
-                            ),
-                            "td": Style(
-                              padding: EdgeInsets.symmetric(
-                                  vertical: 0, horizontal: 10),
-                              alignment: Alignment.center,
-                              //width: double.maxFinite,
-                            ),
-                            "p": Style(
-                              margin: EdgeInsets.symmetric(
-                                  horizontal: 0, vertical: 20),
-                            ),
-                            "img": Style(
-                              padding: EdgeInsets.symmetric(vertical: 10),
-                            ),
-                            "a": Style(
-                              color: Colors.black,
-                            )
-                          },
-                          //blacklistedElements: ['width'],
-                          customRender: {
-                            "img": (RenderContext context, Widget child) {
-                              String originalPic = context.tree.attributes['src'].toString();
-                              try {
-                                if (double.parse(context.tree.attributes['height'].toString()) < 300 &&
-                                    double.parse(context.tree.attributes['width'].toString()) < 300) {
-                                  if (!context.tree.attributes['src'].toString().contains('Stamping') &&
-                                      !context.tree.attributes['src'].toString().contains('Logo')) {
-                                    String src = context.tree.attributes['src'].toString();
-                                    String imageName = src.substring(
-                                        src.lastIndexOf('/'), src.length);
-                                    imageName = imageName.substring(
-                                        0, imageName.indexOf('-'));
-                                    String extension = src.substring(
-                                        src.lastIndexOf('.'), src.length);
-                                    originalPic =
-                                        src.substring(0, src.lastIndexOf('/')) +
-                                            imageName +
-                                            extension;
-                                    //print(attributes['src']);
-                                  }
-                                }
-                                //print(originalPic);
-
-                                return InteractiveViewsImage(
-                                    context.tree.attributes, originalPic);
-                              } catch (e) {
-                                print(e);
-                                // print(attributes['src']);
-                                // print(originalPic);
-                                return InteractiveViewsImage(
-                                    context.tree.attributes, context.tree.attributes['src'].toString());
-                              }
-                            },
-                            "table": (RenderContext context, Widget child,) {
-                              print("$totalTables,$tableIndex");
-                              if(tableIndex==1 || tableIndex==totalTables){
-                                tableIndex++;
-                                return (context.tree as TableLayoutElement).toWidget(context);
-                              }
-                              tableIndex++;
-                              return SingleChildScrollView(
-                                scrollDirection: Axis.horizontal,
-                                child: Container(child:(context.tree as TableLayoutElement).toWidget(context),
-                                padding: EdgeInsets.all(5),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                ),),
-                                clipBehavior: Clip.antiAliasWithSaveLayer,
-                              );
-                            }
-                          },
-                        ),
-                      ),
-                    ],
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Published on: ${widget.news!.date}",
+                    style: TextStyle(
+                      fontSize: 12,
+                    ),
                   ),
-                ),
+                ],
               ),
-              TextButton(
-                onPressed: () {
-                  showModalBottomSheet(
-                      // isScrollControlled: true,
-                      elevation: 10,
-                      context: context,
-                      builder: (context) =>
-                          AddCommentsScreen(comments, context, widget.news.id));
-                },
-                child: Text(
-                  "মতামত জানান",
-                  style: TextStyle(fontSize: 22),
-                ),
-              ),
-              SizedBox(
-                height: 10,
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  InkWell(
+                    child: Icon(
+                      Icons.share,
+                      size: 22,
+                    ),
+                    onTap: () {
+                      final RenderBox box = context.findRenderObject() as RenderBox;
+                      Share.share(
+                          "${widget.news!.title}\nLink: https://www.fact-watch.org/web/?p=${widget.news!.id}",
+                          subject: widget.news!.title,
+                          sharePositionOrigin:
+                              box.localToGlobal(Offset.zero) & box.size);
+                    },
+                  ),
+                  SizedBox(
+                    width: 25,
+                  ),
+                  FavoriteButton(tableIndex: tableIndex,news: widget.news,removeTile: false,function: (){},),
+                ],
               )
             ],
+          ),
+        ),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Theme(
+                  data: Theme.of(context).copyWith(
+                    dividerColor: Colors.transparent,
+                  ),
+                  child: Card(
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    elevation: 0,
+                    // shape: new RoundedRectangleBorder(
+                    //     side: new BorderSide(color: Colors.transparent),
+                    //     borderRadius: BorderRadius.circular(20.0)),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Padding(
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+                          child: Text(
+                            widget.news!.title,
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              fontStyle: FontStyle.italic,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                        if (widget.news!.mediaLinkLarge != null)
+                          ClipRRect(
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(8),
+                              topRight: Radius.circular(8),
+                            ),
+                            child: CachedNetworkImage(
+                              imageUrl: widget.news!.mediaLinkLarge,
+                              fit: BoxFit.fill,
+                              placeholder: (context, url) => Center(
+                                child: SizedBox(
+                                  width: 40.0,
+                                  height: 40.0,
+                                  child: new CircularProgressIndicator(),
+                                ),
+                              ),
+                              errorWidget: (context, url, error) =>
+                                  Icon(Icons.error),
+                            ),
+                          ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(10, 10, 10, 15),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    "Published on: ${widget.news!.date}",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Center(
+                          child: new Html(
+                            data: widget.news!.description,
+                            onLinkTap: (url,_,__,___) {
+                              Functionalities.launchURL(url!);
+                            },
+                            style: {
+                              // tables will have the below background color
+                              "table": Style(
+
+                                backgroundColor: Colors.white,
+                                //width: 1000,
+
+                                width:MediaQuery. of(context). size. width,
+                                border: Border.all(color: Colors.white),
+                                padding: EdgeInsets.symmetric(vertical: 0),
+                                margin: EdgeInsets.symmetric(vertical:0),
+                                wordSpacing: 0,
+                                letterSpacing: 0.1,
+                                //width: double.maxFinite,
+                                alignment: Alignment.topRight,
+                              ),
+                              // some other granular customizations are also possible
+                              "tr": Style(
+
+                                alignment: Alignment.center,
+                                //width: double.infinity,
+                              ),
+                              "td": Style(
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 0, horizontal: 10),
+                                alignment: Alignment.center,
+                                //width: double.maxFinite,
+                              ),
+                              "p": Style(
+                                margin: EdgeInsets.symmetric(
+                                    horizontal: 0, vertical: 20),
+                              ),
+                              "img": Style(
+                                padding: EdgeInsets.symmetric(vertical: 10),
+                              ),
+                              "a": Style(
+                                color: Colors.black,
+                              )
+                            },
+                            //blacklistedElements: ['width'],
+                            customRender: {
+                              "img": (RenderContext context, Widget child) {
+                                String originalPic = context.tree.attributes['src'].toString();
+                                try {
+                                  if (double.parse(context.tree.attributes['height'].toString()) < 300 &&
+                                      double.parse(context.tree.attributes['width'].toString()) < 300) {
+                                    if (!context.tree.attributes['src'].toString().contains('Stamping') &&
+                                        !context.tree.attributes['src'].toString().contains('Logo')) {
+                                      String src = context.tree.attributes['src'].toString();
+                                      String imageName = src.substring(
+                                          src.lastIndexOf('/'), src.length);
+                                      imageName = imageName.substring(
+                                          0, imageName.indexOf('-'));
+                                      String extension = src.substring(
+                                          src.lastIndexOf('.'), src.length);
+                                      originalPic =
+                                          src.substring(0, src.lastIndexOf('/')) +
+                                              imageName +
+                                              extension;
+                                      //print(attributes['src']);
+                                    }
+                                  }
+                                  //print(originalPic);
+
+                                  return InteractiveViewsImage(
+                                      context.tree.attributes, originalPic);
+                                } catch (e) {
+                                  print(e);
+                                  // print(attributes['src']);
+                                  // print(originalPic);
+                                  return InteractiveViewsImage(
+                                      context.tree.attributes, context.tree.attributes['src'].toString());
+                                }
+                              },
+                              "table": (RenderContext context, Widget child,) {
+                                print("$totalTables,$tableIndex");
+                                if(tableIndex==1 || tableIndex==totalTables){
+                                  tableIndex++;
+                                  return (context.tree as TableLayoutElement).toWidget(context);
+                                }
+                                tableIndex++;
+                                return SingleChildScrollView(
+                                  scrollDirection: Axis.horizontal,
+                                  child: Container(child:(context.tree as TableLayoutElement).toWidget(context),
+                                  padding: EdgeInsets.all(5),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                  ),),
+                                  clipBehavior: Clip.antiAliasWithSaveLayer,
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () {
+                    showModalBottomSheet(
+                        // isScrollControlled: true,
+                        elevation: 10,
+                        context: context,
+                        builder: (context) =>
+                            AddCommentsScreen(comments, context, widget.news!.id));
+                  },
+                  child: Text(
+                    "মতামত জানান",
+                    style: TextStyle(fontSize: 22),
+                  ),
+                ),
+                SizedBox(
+                  height: 10,
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -405,10 +371,10 @@ class _InteractiveViewsImageState extends State<InteractiveViewsImage> {
   }
 }
 
-Future<List<Comment>> getComments(News news) async {
+Future<List<Comment>> getComments(News? news) async {
   List<Comment> comments = [];
   var _comments = await NetworkHelper(
-          'https://www.fact-watch.org/web/wp-json/wp/v2/comments?post=${news.id}&_fields=author_name,author_url,date,content')
+          'https://www.fact-watch.org/web/wp-json/wp/v2/comments?post=${news!.id}&_fields=author_name,author_url,date,content')
       .getData();
   for (var comment in _comments) {
     comments.add(Comment(comment['author_name'], comment['author_url'],

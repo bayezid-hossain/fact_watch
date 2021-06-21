@@ -4,22 +4,35 @@ import 'News.dart';
 import 'package:fact_watch/individual_news.dart';
 import 'CategoriesTile.dart';
 import 'package:share/share.dart';
-
-class NewsTileSmall extends StatelessWidget {
-  final News news;
-  NewsTileSmall({required this.news});
+import 'favoriteButton.dart';
+import 'functionalities.dart';
+class NewsTileSmall extends StatefulWidget {
+  final News? news;
+  final bool removeTile;
+  final Function function;
+  NewsTileSmall({required this.news,required this.removeTile,required this.function});
 
   @override
+  _NewsTileSmallState createState() => _NewsTileSmallState();
+}
+
+class _NewsTileSmallState extends State<NewsTileSmall> {
+  @override
   Widget build(BuildContext context) {
-    print(news.categories);
+    widget.news!.title=widget.news!.title.replaceAll("&#8211;","");
     return InkWell(
       splashColor: Colors.blueAccent,
       customBorder: RoundedRectangleBorder(
         side: BorderSide(color: Colors.blueAccent),
       ),
-      onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => IndividualNews(news)));
+      onTap: () async {
+        (widget.removeTile==true)?Functionalities.previousRoute="Favorites":Functionalities.previousRoute="HomePage";
+        final value= await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => IndividualNews(widget.news)));
+        print(value);
+        setState(() {
+
+        });
       },
       child: Column(
         children: [
@@ -49,7 +62,7 @@ class NewsTileSmall extends StatelessWidget {
                             padding: EdgeInsets.symmetric(
                                 horizontal: 10, vertical: 10),
                             child: Text(
-                              news.title,
+                              widget.news!.title,
                               style: TextStyle(
                                 fontSize: 17,
                                 color: Colors.black,
@@ -58,7 +71,7 @@ class NewsTileSmall extends StatelessWidget {
                             ),
                           ),
                         ),
-                        if (news.thumbnail != null)
+                        if (widget.news!.thumbnail != null)
                           Flexible(
                             flex: 0,
                             child: Padding(
@@ -70,7 +83,7 @@ class NewsTileSmall extends StatelessWidget {
                                 child: CachedNetworkImage(
                                   height: 80,
                                   width: 80,
-                                  imageUrl: news.thumbnail,
+                                  imageUrl: widget.news!.thumbnail,
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => Center(
                                     child: SizedBox(
@@ -87,7 +100,7 @@ class NewsTileSmall extends StatelessWidget {
                           ),
                       ],
                     ),
-                    CategoriesTile(news: news),
+                    CategoriesTile(news: widget.news),
                     Padding(
                       padding:
                           EdgeInsets.symmetric(horizontal: 10, vertical: 15),
@@ -97,7 +110,7 @@ class NewsTileSmall extends StatelessWidget {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text("Published on ${news.date}"),
+                              Text("Published on ${widget.news!.date}"),
                             ],
                           ),
                           Row(
@@ -107,8 +120,8 @@ class NewsTileSmall extends StatelessWidget {
                                 onTap: () {
                                   final RenderBox box = context.findRenderObject() as RenderBox;
                                   Share.share(
-                                      "${news.title}\nLink: https://www.fact-watch.org/web/?p=${news.id}",
-                                      subject: news.title,
+                                      "${widget.news!.title}\nLink: https://www.fact-watch.org/web/?p=${widget.news!.id}",
+                                      subject: widget.news!.title,
                                       sharePositionOrigin:
                                           box.localToGlobal(Offset.zero) &
                                               box.size);
@@ -121,15 +134,8 @@ class NewsTileSmall extends StatelessWidget {
                               SizedBox(
                                 width: 10,
                               ),
-                              InkWell(
-                                onTap: () {
-                                  news.fav = true;
-                                },
-                                child: Icon(
-                                  Icons.bookmark_border,
-                                  size: 20,
-                                ),
-                              ),
+
+                              FavoriteButton(tableIndex: 1,news: widget.news,removeTile: widget.removeTile,function: widget.function,)
                             ],
                           )
                         ],

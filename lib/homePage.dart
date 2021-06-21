@@ -8,7 +8,8 @@ import 'homepageData.dart';
 import 'package:ff_navigation_bar/ff_navigation_bar.dart';
 import 'News.dart';
 
-
+import 'keepAlivePage.dart';
+import 'viewFavorites.dart';
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -23,6 +24,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   static String content="";
   static String searchText="";
   String searchContent = "";
+  var currentPageValue=0.0;
   PageController _pageController=new PageController();
   static List<News> newsToShow=[];
   @override
@@ -51,7 +53,12 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     length = 25;
     content = jsonEncode(newsToShow);
     WidgetsBinding.instance!.addObserver(this);
-    _pageController = PageController(initialPage: index);
+    _pageController = PageController(initialPage: index,keepPage: true);
+    _pageController.addListener(() {
+      setState(() {
+        currentPageValue=_pageController.page!;
+      });
+    });
     focusNode.addListener(() {
       if (focusNode.hasFocus) {
         hintText = '';
@@ -62,10 +69,6 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     });
   }
 
-  final tabs = [
-    HomePageData(content, length),
-    //IndividualNews(Functionalities.allNews[0]),
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -155,8 +158,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
         ),
         body: PageView(
           children: [
-            HomePageData(searchContent, length,searchText,""),
-            HomePageData(jsonEncode(Functionalities.getNewsByCategory(278)),Functionalities.getNewsByCategory(278).length,"","278"),
+            KeepAlivePage(child: HomePageData(searchContent, length,searchText,"")),
+            KeepAlivePage(child: ViewFavorites()),
             //IndividualNews(Functionalities.allNews[0]),Indiv
           ],
           onPageChanged: onPageChanged,
@@ -177,6 +180,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
   void onPageChanged(int page) {
     setState(() {
       this.index = page;
+      //_pageController.jumpTo(currentPageValue);
     });
   }
 
@@ -210,7 +214,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
     }
     searchText=query;
     final news = newsToShow.where((news) {
-      return news.title.toLowerCase().contains(query.toLowerCase());
+      return news.title.toLowerCase().contains(query.toLowerCase())||news.description.toLowerCase().contains(query.toLowerCase());
     }).toList();
     setState(() {
       searchContent = jsonEncode(news);

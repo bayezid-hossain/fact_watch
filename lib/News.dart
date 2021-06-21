@@ -7,9 +7,8 @@ class News {
   String thumbnail;
   String date;
   String description;
-  bool fav;
   News({required this.id,required  this.title,required  this.excerpt,required  this.mediaLinkLarge,required  this.thumbnail,required
-  this.date,required  this.description,required  this.categories,required this.fav});
+  this.date,required  this.description,required  this.categories});
   Map<String, dynamic> toJson() => {
         'id': id,
         'title': title,
@@ -18,8 +17,7 @@ class News {
         'thumbnail': thumbnail,
         'date': date,
         'description': description,
-        'categories': categories,
-    'fav':fav
+        'categories': categories
       };
 
   factory News.fromJson(Map<String, dynamic> json) => News(id:
@@ -30,5 +28,5 @@ class News {
       json["thumbnail"],date:
       json["date"],description:
       json["description"],categories:
-      json["categories"],fav: json["fav"]);
+      json["categories"]);
 }

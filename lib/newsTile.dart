@@ -4,20 +4,33 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'News.dart';
 import 'package:fact_watch/CategoriesTile.dart';
 import 'package:share/share.dart';
-
-class NewsTile extends StatelessWidget {
-  final News news;
-  NewsTile({required this.news});
+import 'favoriteButton.dart';
+class NewsTile extends StatefulWidget {
+  final News? news;
+  final bool removeTile;
+  final Function function;
+  NewsTile({required this.news,required this.removeTile,required this.function});
 
   @override
+  _NewsTileState createState() => _NewsTileState();
+}
+
+class _NewsTileState extends State<NewsTile> {
+  @override
   Widget build(BuildContext context) {
-    print(news.categories);
-    news.excerpt=news.excerpt.replaceAll("Published on: ","");
+    print(widget.news!.categories);
+    widget.news!.excerpt=widget.news!.excerpt.replaceAll("Published on: ","").replaceAll("&#8211;""","");
+
+    widget.news!.title=widget.news!.title.replaceAll("&#8211;","");
     return InkWell(
       splashColor: Colors.blueAccent,
-      onTap: () {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => IndividualNews(news)));
+      onTap: () async {
+        final value= await Navigator.push(context,
+            MaterialPageRoute(builder: (context) => IndividualNews(widget.news)));
+        print(value);
+        setState(() {
+
+        });
       },
       child: Column(
         children: [
@@ -35,7 +48,7 @@ class NewsTile extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  if (news.mediaLinkLarge != null)
+                  if (widget.news!.mediaLinkLarge != null)
                     ClipRRect(
                       borderRadius: BorderRadius.only(
                         topLeft: Radius.circular(8),
@@ -44,7 +57,7 @@ class NewsTile extends StatelessWidget {
                       child: AspectRatio(
                         aspectRatio: 16 / 9,
                         child: CachedNetworkImage(
-                          imageUrl: news.mediaLinkLarge,
+                          imageUrl: widget.news!.mediaLinkLarge,
                           fit: BoxFit.fill,
                           placeholder: (context, url) => Center(
                             child: SizedBox(
@@ -58,11 +71,11 @@ class NewsTile extends StatelessWidget {
                         ),
                       ),
                     ),
-                  CategoriesTile(news: news),
+                  CategoriesTile(news: widget.news),
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     child: Text(
-                      news.title,
+                      widget.news!.title,
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 17,
@@ -73,7 +86,7 @@ class NewsTile extends StatelessWidget {
                   Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10, vertical: 0),
                     child: Text(
-                      news.excerpt,
+                      widget.news!.excerpt,
                       style: TextStyle(
                         color: Colors.black,
                       ),
@@ -88,7 +101,7 @@ class NewsTile extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              "Published on: ${news.date}",
+                              "Published on: ${widget.news!.date}",
                               style: TextStyle(
                                 fontSize: 12,
                               ),
@@ -106,8 +119,8 @@ class NewsTile extends StatelessWidget {
                               onTap: () {
                                 final RenderBox box = context.findRenderObject() as RenderBox;
                                 Share.share(
-                                    "${news.title}\nLink: https://www.fact-watch.org/web/?p=${news.id}",
-                                    subject: news.title,
+                                    "${widget.news!.title}\nLink: https://www.fact-watch.org/web/?p=${widget.news!.id}",
+                                    subject: widget.news!.title,
                                     sharePositionOrigin:
                                         box.localToGlobal(Offset.zero) &
                                             box.size);
@@ -116,10 +129,8 @@ class NewsTile extends StatelessWidget {
                             SizedBox(
                               width: 10,
                             ),
-                            Icon(
-                              Icons.bookmark_border,
-                              size: 20,
-                            ),
+                            FavoriteButton(tableIndex: 1,news: widget.news,removeTile: widget.removeTile,function: widget.function,)
+
                           ],
                         )
                       ],

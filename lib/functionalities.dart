@@ -11,14 +11,16 @@ import 'networking/networking.dart';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
-
+import 'favoriteList.dart';
 class Functionalities {
+  static String currentRoute="HomePage";
+  static String previousRoute="null";
   static List<News> allNews = [];
   static List<News> videos = [];
   static Map<int, News> newsMap = {};
   static Map<int, String> categories = {};
   static String initialContent = "";
-  static List<int> favoriteNews=[];
+  static FavoriteList favoriteNews=FavoriteList();
   static  saveLastNewsId(int id) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt("lastId", id);
@@ -66,6 +68,7 @@ class Functionalities {
     }
 
     Functionalities.allNews.addAll(previousNews);
+    allNews.toSet().toList(growable: true);
     // print(Functionalities.allNews.toString());
     await Functionalities.saveLastNewsId(Functionalities.allNews[0].id);
     await Functionalities.writeInitialContent(Functionalities.allNews);
@@ -112,10 +115,11 @@ class Functionalities {
         print(e);
       }
       Functionalities.allNews.add(News(id: id, title: title,excerpt:  excerpt,mediaLinkLarge:  mediumLarge,
-          thumbnail: thumbnail,date:  date,description:  content, categories: categories,fav: false));
+          thumbnail: thumbnail,date:  date,description:  content, categories: categories));
       newNews.add(News(id: id, title: title,excerpt:  excerpt,mediaLinkLarge:  mediumLarge,
-          thumbnail: thumbnail,date:  date,description:  content, categories: categories,fav: false));
+          thumbnail: thumbnail,date:  date,description:  content, categories: categories));
     }
+    allNews.toSet().toList(growable: true);
     return newNews;
   }
 
@@ -165,13 +169,19 @@ class Functionalities {
     allNews.forEach((element) {
       if(intList.contains(element.id))intList.remove(element.id);
     });
-    int loopSize=(intList.length/10).toInt();
-    for(int i=0;i<loopSize+1;i++){
+    int loopSize=(intList.length/10).ceil().toInt();
+    //if(intList.length%10>0)loopSize++;
+    for(int i=0;i<loopSize;i++){
       String query = "";
+      List<int> blackList=[];
       for (var id in intList) {
 
         query += "include[]=${id}&";
+        blackList.add(id);
+        if(blackList.length==10)break;
       }
+      intList.removeRange(0,blackList.length);
+
       if (query != "") {
         var newNews = await NetworkHelper(
             'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
@@ -196,13 +206,19 @@ class Functionalities {
     getNewsByCategory(id).forEach((element) {
       if(intList.contains(element.id))intList.remove(element.id);
     });
-    int loopSize=(intList.length/10).toInt();
-    for(int i=0;i<loopSize+1;i++){
+    int loopSize=(intList.length/10).ceil().toInt();
+    //if(intList.length%10>0)loopSize++;
+    for(int i=0;i<loopSize;i++){
       String query = "";
+      List<int> blackList=[];
     for (var id in intList) {
 
       query += "include[]=${id}&";
+      blackList.add(id);
+      if(blackList.length==10)break;
     }
+    intList.removeRange(0,blackList.length);
+
     if (query != "") {
       var newNews = await NetworkHelper(
           'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
@@ -235,6 +251,8 @@ class Functionalities {
     else
        await getInitNews();
     mapNews();
+    List<int> favs=await loadFavorites();
+    favs.forEach((element) {favoriteNews.add(element);});
     // bool firstRun = await checkFirstRun();
     // try {
     //   initialContent = await getInitialContent();
@@ -268,6 +286,30 @@ class Functionalities {
     prefs.setBool("firstRun", false);
   }
 
+  static Future<void> setFavorites() async{
+    SharedPreferences prefs=await SharedPreferences.getInstance();
+
+// your custom int list
+
+
+// convert your custom list to string list
+    List<String> stringsList=  favoriteNews.favoriteNews.map((i)=>i.toString()).toList();
+
+// store your string list in shared prefs
+    prefs.setStringList("favorites", stringsList);
+  }
+
+  static Future<List<int>> loadFavorites() async{
+    SharedPreferences prefs=await SharedPreferences.getInstance();
+
+// fetch your string list
+    List<String>? mList = prefs.getStringList('favorites');
+
+//convert your string list to your original int list
+    List<int> mOriginaList =(mList==null)?[]: mList.map((i)=> int.parse(i)).toList();
+    return mOriginaList;
+
+  }
   static void launchURL(String _url) async => await canLaunch(_url)
       ? await launch(_url)
       : throw 'Could not launch $_url';
@@ -290,8 +332,12 @@ class Functionalities {
     // print(Functionalities.categories);
     // print(allNews[allNews.length - 1].id);
   }
+  static List<News?>? getFavorites(){
+    List<News?>? favorites=[];
+    for(int i in favoriteNews.favoriteNews)favorites.add(newsMap[i]);
+    return favorites;
+  }
 }
-
 class CurveDraw extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

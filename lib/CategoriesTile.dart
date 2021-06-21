@@ -6,12 +6,12 @@ import 'News.dart';
 import 'dart:convert';
 
 class CategoriesTile extends StatelessWidget {
-  final News news;
+  final News? news;
   CategoriesTile({required this.news});
   @override
   Widget build(BuildContext context) {
-    List<dynamic> categories = jsonDecode(news.categories);
-    if(categories!=null)return Padding(
+    List<dynamic> categories = jsonDecode(news!.categories);
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
       child: Container(
         height: 25,
@@ -43,6 +43,6 @@ class CategoriesTile extends StatelessWidget {
         ),
       ),
     );
-    else return Container();
+    //else return Container();
   }
 }

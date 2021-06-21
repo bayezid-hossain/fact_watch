@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:fact_watch/functionalities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_html/flutter_html.dart';
 import 'News.dart';
 import 'newsTile.dart';
 import 'newsTileSmall.dart';
@@ -42,8 +41,11 @@ class HomePageData extends StatelessWidget {
                                 if (!snapshot.hasData) {
                                   return SizedBox(child: Center(child: CircularProgressIndicator(),),height: 50,);
                                 } else {
+                                  news.addAll((snapshot as AsyncSnapshot).data);
                                   return ListView.builder(
                                     shrinkWrap: true,
+
+                                      physics: ClampingScrollPhysics(),
                                       itemCount: (snapshot as AsyncSnapshot).data.length,
                                       itemBuilder: (BuildContext context, int index) {
                                         try {
@@ -64,9 +66,10 @@ class HomePageData extends StatelessWidget {
                           future: Functionalities.fetchNewsBySearch(searchText),
                            builder:(context, AsyncSnapshot snapshot) {
                               if (!snapshot.hasData) {
-                              return SizedBox(child: Center(child: CircularProgressIndicator(),),height: 50,);
+                                 return SizedBox(child: Center(child: CircularProgressIndicator(),),height: 50,);
                               }
                               else {
+                                news.addAll((snapshot as AsyncSnapshot).data);
                               return ListView.builder(
                                 shrinkWrap: true,
                                 physics: ClampingScrollPhysics(),
@@ -93,6 +96,7 @@ class HomePageData extends StatelessWidget {
                         children: [
                           Divider(),
                           Divider(),
+                          SizedBox(height: 20,),
                           Expanded(
                             child: _buildCard(),
                           ),
@@ -129,13 +133,14 @@ class NewsExample extends StatelessWidget {
   Widget build(BuildContext context) {
     return big
         ? NewsTile(
-            news: news,
+            news: news,removeTile: false,function: (){},
           )
-        : NewsTileSmall(news: news);
+        : NewsTileSmall(news: news,removeTile: false,function: (){},);
   }
 }
 
 Widget _buildCard() => Column(
+  mainAxisAlignment: MainAxisAlignment.end,
       children: [
         // ListTile(
         //   title: Text(
