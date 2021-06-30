@@ -1,9 +1,9 @@
 import 'dart:convert';
 
-import 'package:fact_watch/homepageData.dart';
+import 'package:fact_watch/views/homepageData.dart';
 import 'package:flutter/material.dart';
-import 'functionalities.dart';
-import 'News.dart';
+import '../functions/functionalities.dart';
+import '../models/News.dart';
 class CategorizedNews extends StatefulWidget {
 
   final int id;

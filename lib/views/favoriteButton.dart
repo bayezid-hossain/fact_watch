@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'functionalities.dart';
-import 'News.dart';
+import '../functions/functionalities.dart';
+import '../models/News.dart';
 class FavoriteButton extends StatefulWidget {
   final News? news;
   final int tableIndex;

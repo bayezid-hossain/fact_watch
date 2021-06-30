@@ -1,6 +1,6 @@
 // @dart=2.9
 
-import 'package:fact_watch/splash_screen.dart';
+import 'package:fact_watch/screens/splash_screen.dart';
 import 'package:flutter/material.dart';
 
 final RouteObserver <ModalRoute<void>> routeObserver=RouteObserver<ModalRoute<void>>();

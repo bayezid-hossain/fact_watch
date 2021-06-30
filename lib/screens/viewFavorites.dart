@@ -1,13 +1,13 @@
 import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:fact_watch/functionalities.dart';
+import 'package:fact_watch/functions/functionalities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:share/share.dart';
-import 'CategoriesTile.dart';
-import 'News.dart';
-import 'favoriteButton.dart';
+import '../views/CategoriesTile.dart';
+import '../models/News.dart';
+import '../views/favoriteButton.dart';
 import 'individual_news.dart';
 class ViewFavorites extends StatefulWidget {
 
