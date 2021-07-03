@@ -69,12 +69,13 @@ class AboutUs extends StatelessWidget {
                     SizedBox( height:10),
                     Text("কোন একটা প্রতিবেদন আমাদের ওয়েবসাইটে ছাপা হবার পরে সেই বিষয়ে আমরা যদি নতুন তথ্য-প্রমাণ দেখতে পাই, আমরা তখনই সেগুলি যাচাই-বাছাই শুরু করি এবং দরকারে ব্যাখ্যাসহ শুধরে নেই ও তা স্পষ্টভাবে ওয়েবসাইটে জানিয়ে রাখি।"),
                     SizedBox( height:10),
-                    Row(children: [
-                      Text("এ বিষয়ে বিস্তারিত জানতে দেখুন: "),
-                      TextButton(onPressed: (){}, child: Text(
+                    Text("এ বিষয়ে বিস্তারিত জানতে দেখুন: "),
+                    Center(
+                      child: TextButton(onPressed: (){Navigator.push(context,
+                          MaterialPageRoute(builder: (context) => HowWeWork()));}, child: Text(
                         " আমাদের কাজের পদ্ধতি",style: TextStyle(fontWeight: FontWeight.bold),
-                      ))
-                    ],),
+                      )),
+                    ),
                     SizedBox( height:10),
 
                   ],),
@@ -125,14 +126,14 @@ class AboutUs extends StatelessWidget {
                     SizedBox( height:10),
                     Text("After a report has been published, if we find significant new information/evidence about the story, we consider the new evidence and update our report if necessary, making the changes clear to our readers."),
                     SizedBox( height:10),
-                    Row(children: [
-                      Text("For details about our methodology, please see: "),
-                      TextButton(onPressed: (){Navigator.push(context,
+                    Text("For details about our methodology, please see: "),
+                    Center(
+                      child: TextButton(onPressed: (){Navigator.push(context,
                           MaterialPageRoute(builder: (context) => HowWeWork()));
                       }, child: Text(
                         " How we work",style: TextStyle(fontWeight: FontWeight.bold),
-                      ))
-                    ],),
+                      )),
+                    ),
                     SizedBox( height:10),
 
                   ],),

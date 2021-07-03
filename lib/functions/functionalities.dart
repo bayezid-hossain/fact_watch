@@ -1,5 +1,3 @@
-
-
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -12,16 +10,17 @@ import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../views/favoriteList.dart';
+
 class Functionalities {
-  static String currentRoute="HomePage";
-  static String previousRoute="null";
+  static String currentRoute = "HomePage";
+  static String previousRoute = "null";
   static List<News> allNews = [];
   static List<News> videos = [];
   static Map<int, News> newsMap = {};
   static Map<int, String> categories = {};
   static String initialContent = "";
-  static FavoriteList favoriteNews=FavoriteList();
-  static  saveLastNewsId(int id) async {
+  static FavoriteList favoriteNews = FavoriteList();
+  static saveLastNewsId(int id) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt("lastId", id);
   }
@@ -31,8 +30,6 @@ class Functionalities {
     for (News news in allNews) {
       newsMap[news.id] = news;
     }
-
-
   }
 
   static List<News> getNewsByCategory(int id) {
@@ -43,7 +40,38 @@ class Functionalities {
 
     return categorizedNews;
   }
+  static getOfflineNews()async{
 
+    var tagObjsJson = jsonDecode(initialContent) as List;
+    //List<Tag> tagObjs = tagObjsJson.map((tagJson) => Tag.fromJson(tagJson)).toList();
+    List<News> previousNews = tagObjsJson.map((e) => News.fromJson(e)).toList();
+    Functionalities.allNews.addAll(previousNews);
+    allNews.toSet().toList(growable: true);
+    mapNews();
+    List<int> favs = await loadFavorites();
+
+    favs.forEach((element) {
+      favoriteNews.favoriteNews.add(element);
+    });
+
+    Functionalities.categories[252] = "আইন-আদালত";
+    Functionalities.categories[253] = "তথ্য যাচাই";
+    Functionalities.categories[255] =  "জন উদ্যোগ";
+    Functionalities.categories[259] = "লেখাজোখা";
+    Functionalities.categories[261] = "তথ্য যাচাই";
+    Functionalities.categories[265] =  "জনস্বাস্থ্য";
+    Functionalities.categories[266] = "বিজ্ঞান ও পরিবেশ";
+    Functionalities.categories[271] =  "করোনা তথ্য যাচাই";
+    Functionalities.categories[273] = "জরুরি পরামর্শ";
+    Functionalities.categories[276] = "ফ্যাক্টওয়াচ ভিডিও";
+    Functionalities.categories[277] = "বিজ্ঞাপন যাচাই";
+    Functionalities.categories[278] = "স্বাস্থ্য";
+    Functionalities.categories[280] = "বাংলাদেশ";
+    Functionalities.categories[282] =  "করোনা মহামারি";
+    Functionalities.categories[283] = "ফ্যাক্ট ফাইল";
+    // print(Functionalities.allNews.toString());
+
+  }
   static getSelectedNews() async {
     var newsIds = await NetworkHelper(
             'https://www.fact-watch.org/web/wp-json/wp/v2/posts?per_page=100&_fields=id')
@@ -63,8 +91,8 @@ class Functionalities {
       var newNews = await NetworkHelper(
               'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
           .getData();
-       formatNews(newNews);
-       mapNews();
+      formatNews(newNews);
+      mapNews();
     }
 
     Functionalities.allNews.addAll(previousNews);
@@ -75,7 +103,7 @@ class Functionalities {
   }
 
   static List<News> formatNews(var rawNews) {
-    List<News> newNews=[];
+    List<News> newNews = [];
     for (var singleNews in rawNews) {
       int id;
       String title, excerpt, date;
@@ -92,19 +120,36 @@ class Functionalities {
       date = new DateFormat("MMMM d, yyyy").format(DateTime.parse(date));
       content = content
           .replaceAll(date, "")
+          .replaceAll('[$date]', "")
           .replaceAll("Published on:", "")
-          .replaceAll("&#8217;", " ");
+          .replaceAll("&#8217;", " ")
+          .replaceAll("&#8211;", "")
+          .replaceAll("&#8220;", "")
+          .replaceAll("&#8221;", "");
       title = singleNews['title']['rendered']
           .replaceAll("&#8217;", " ")
           .replaceAll("&#8216;", " ");
       excerpt = singleNews['excerpt']['rendered']
           .toString()
           .replaceAll("<p>", "")
+          .replaceAll('[$date]', "")
           .replaceAll("&hellip; </p>", "...")
           .replaceAll("&#8217;", " ")
           .replaceAll("&#8216;", " ");
+      excerpt = excerpt
+          .replaceAll("Published on: ", "")
+          .replaceAll("&#8211;" "", "")
+          .replaceAll("&#8211;", "")
+          .replaceAll("&#8220;", "")
+          .replaceAll("&#8221;", "");
+
+      title = title
+          .replaceAll("&#8211;", "")
+          .replaceAll("&#8220;", "")
+          .replaceAll("&#8221;", "");
+
       String categories = singleNews['categories'].toString();
-    //  print(categories);
+      //  print(categories);
       var thumbnail, mediumLarge;
       try {
         thumbnail = singleNews['_embedded']['wp:featuredmedia'][0]
@@ -114,10 +159,24 @@ class Functionalities {
       } catch (e) {
         print(e);
       }
-      Functionalities.allNews.add(News(id: id, title: title,excerpt:  excerpt,mediaLinkLarge:  mediumLarge,
-          thumbnail: thumbnail,date:  date,description:  content, categories: categories));
-      newNews.add(News(id: id, title: title,excerpt:  excerpt,mediaLinkLarge:  mediumLarge,
-          thumbnail: thumbnail,date:  date,description:  content, categories: categories));
+      Functionalities.allNews.add(News(
+          id: id,
+          title: title,
+          excerpt: excerpt,
+          mediaLinkLarge: mediumLarge,
+          thumbnail: thumbnail,
+          date: date,
+          description: content,
+          categories: categories));
+      newNews.add(News(
+          id: id,
+          title: title,
+          excerpt: excerpt,
+          mediaLinkLarge: mediumLarge,
+          thumbnail: thumbnail,
+          date: date,
+          description: content,
+          categories: categories));
     }
     allNews.toSet().toList(growable: true);
     return newNews;
@@ -155,36 +214,36 @@ class Functionalities {
         .getData();
 
     formatNews(newsData);
-     await saveLastNewsId(Functionalities.allNews[0].id);
-     await saveFirstRun();
-     await writeInitialContent(Functionalities.allNews);
-     await mapNews();
+    await saveLastNewsId(Functionalities.allNews[0].id);
+    await saveFirstRun();
+    await writeInitialContent(Functionalities.allNews);
+    await mapNews();
   }
-  static Future<List<News>> fetchNewsBySearch(String searchText)async{
-    List<News> searchResult=[];
+
+  static Future<List<News>> fetchNewsBySearch(String searchText) async {
+    List<News> searchResult = [];
     List<dynamic> newsIds = await NetworkHelper(
-        'https://www.fact-watch.org/web/wp-json/wp/v2/posts?search=$searchText&per_page=100&_fields=id')
+            'https://www.fact-watch.org/web/wp-json/wp/v2/posts?search=$searchText&per_page=100&_fields=id')
         .getData();
     List<int> intList = newsIds.map((s) => s['id'] as int).toList();
     allNews.forEach((element) {
-      if(intList.contains(element.id))intList.remove(element.id);
+      if (intList.contains(element.id)) intList.remove(element.id);
     });
-    int loopSize=(intList.length/10).ceil().toInt();
+    int loopSize = (intList.length / 10).ceil().toInt();
     //if(intList.length%10>0)loopSize++;
-    for(int i=0;i<loopSize;i++){
+    for (int i = 0; i < loopSize; i++) {
       String query = "";
-      List<int> blackList=[];
+      List<int> blackList = [];
       for (var id in intList) {
-
-        query += "include[]=${id}&";
+        query += "include[]=$id&";
         blackList.add(id);
-        if(blackList.length==10)break;
+        if (blackList.length == 10) break;
       }
-      intList.removeRange(0,blackList.length);
+      intList.removeRange(0, blackList.length);
 
       if (query != "") {
         var newNews = await NetworkHelper(
-            'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
+                'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
             .getData();
         searchResult.addAll(formatNews(newNews));
 
@@ -195,45 +254,42 @@ class Functionalities {
     return searchResult;
   }
 
-  static Future<List<News>> fetchNewsByCategory(int id)async {
-    List<News> searchResult=[];
+  static Future<List<News>> fetchNewsByCategory(int id) async {
+    List<News> searchResult = [];
     List<dynamic> newsIds = await NetworkHelper(
-        'https://www.fact-watch.org/web/wp-json/wp/v2/posts?categories=$id&per_page=100&_fields=id')
+            'https://www.fact-watch.org/web/wp-json/wp/v2/posts?categories=$id&per_page=100&_fields=id')
         .getData();
-
 
     List<int> intList = newsIds.map((s) => s['id'] as int).toList();
     getNewsByCategory(id).forEach((element) {
-      if(intList.contains(element.id))intList.remove(element.id);
+      if (intList.contains(element.id)) intList.remove(element.id);
     });
-    int loopSize=(intList.length/10).ceil().toInt();
+    int loopSize = (intList.length / 10).ceil().toInt();
     //if(intList.length%10>0)loopSize++;
-    for(int i=0;i<loopSize;i++){
+    for (int i = 0; i < loopSize; i++) {
       String query = "";
-      List<int> blackList=[];
-    for (var id in intList) {
+      List<int> blackList = [];
+      for (var id in intList) {
+        query += "include[]=$id&";
+        blackList.add(id);
+        if (blackList.length == 10) break;
+      }
+      intList.removeRange(0, blackList.length);
 
-      query += "include[]=${id}&";
-      blackList.add(id);
-      if(blackList.length==10)break;
-    }
-    intList.removeRange(0,blackList.length);
+      if (query != "") {
+        var newNews = await NetworkHelper(
+                'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
+            .getData();
+        searchResult.addAll(formatNews(newNews));
 
-    if (query != "") {
-      var newNews = await NetworkHelper(
-          'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
-          .getData();
-      searchResult.addAll(formatNews(newNews));
-
-      await writeInitialContent(Functionalities.allNews);
-      mapNews();
-    }
+        await writeInitialContent(Functionalities.allNews);
+        mapNews();
+      }
     }
     return searchResult;
-
   }
 
-  static  writeInitialContent(var news) async {
+  static writeInitialContent(var news) async {
     try {
       final file = await _localFile;
 
@@ -249,10 +305,12 @@ class Functionalities {
     if (initialContent != "")
       await getSelectedNews();
     else
-       await getInitNews();
+      await getInitNews();
     mapNews();
-    List<int> favs=await loadFavorites();
-    favs.forEach((element) {favoriteNews.add(element);});
+    List<int> favs = await loadFavorites();
+    favs.forEach((element) {
+      favoriteNews.favoriteNews.add(element);
+    });
     // bool firstRun = await checkFirstRun();
     // try {
     //   initialContent = await getInitialContent();
@@ -286,30 +344,31 @@ class Functionalities {
     prefs.setBool("firstRun", false);
   }
 
-  static Future<void> setFavorites() async{
-    SharedPreferences prefs=await SharedPreferences.getInstance();
+  static Future<void> setFavorites() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
 // your custom int list
 
-
 // convert your custom list to string list
-    List<String> stringsList=  favoriteNews.favoriteNews.map((i)=>i.toString()).toList();
+    List<String> stringsList =
+        favoriteNews.favoriteNews.map((i) => i.toString()).toList();
 
 // store your string list in shared prefs
     prefs.setStringList("favorites", stringsList);
   }
 
-  static Future<List<int>> loadFavorites() async{
-    SharedPreferences prefs=await SharedPreferences.getInstance();
+  static Future<List<int>> loadFavorites() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
 
 // fetch your string list
     List<String>? mList = prefs.getStringList('favorites');
 
 //convert your string list to your original int list
-    List<int> mOriginaList =(mList==null)?[]: mList.map((i)=> int.parse(i)).toList();
+    List<int> mOriginaList =
+        (mList == null) ? [] : mList.map((i) => int.parse(i)).toList();
     return mOriginaList;
-
   }
+
   static void launchURL(String _url) async => await canLaunch(_url)
       ? await launch(_url)
       : throw 'Could not launch $_url';
@@ -320,24 +379,32 @@ class Functionalities {
     for (var category in categories) {
       Functionalities.categories[category['id']] = category['name'];
     }
+    Functionalities.categories[252] = "আইন-আদালত";
     Functionalities.categories[253] = "তথ্য যাচাই";
-    Functionalities.categories[277] = "বিজ্ঞাপন যাচাই";
-    Functionalities.categories[283] = "ফ্যাক্ট ফাইল";
-    Functionalities.categories[261] = "তথ্য যাচাই";
-    Functionalities.categories[278] = "স্বাস্থ্য";
-    Functionalities.categories[276] = "ফ্যাক্টওয়াচ ভিডিও";
-    Functionalities.categories[273] = "জরুরি পরামর্শ";
+    Functionalities.categories[255] =  "জন উদ্যোগ";
     Functionalities.categories[259] = "লেখাজোখা";
+    Functionalities.categories[261] = "তথ্য যাচাই";
+    Functionalities.categories[265] =  "জনস্বাস্থ্য";
+    Functionalities.categories[266] = "বিজ্ঞান ও পরিবেশ";
+    Functionalities.categories[271] =  "করোনা তথ্য যাচাই";
+    Functionalities.categories[273] = "জরুরি পরামর্শ";
+    Functionalities.categories[276] = "ফ্যাক্টওয়াচ ভিডিও";
+    Functionalities.categories[277] = "বিজ্ঞাপন যাচাই";
+    Functionalities.categories[278] = "স্বাস্থ্য";
     Functionalities.categories[280] = "বাংলাদেশ";
+    Functionalities.categories[282] =  "করোনা মহামারি";
+    Functionalities.categories[283] = "ফ্যাক্ট ফাইল";
     // print(Functionalities.categories);
     // print(allNews[allNews.length - 1].id);
   }
-  static List<News?>? getFavorites(){
-    List<News?>? favorites=[];
-    for(int i in favoriteNews.favoriteNews)favorites.add(newsMap[i]);
+
+  static List<News?>? getFavorites() {
+    List<News?>? favorites = [];
+    for (int i in favoriteNews.favoriteNews) favorites.add(newsMap[i]);
     return favorites;
   }
 }
+
 class CurveDraw extends CustomClipper<Path> {
   @override
   Path getClip(Size size) {

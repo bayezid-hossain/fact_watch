@@ -37,7 +37,7 @@ class _IndividualNewsState extends State<IndividualNews> {
   Widget build(BuildContext context) {
     int totalTables="<table".allMatches(widget.news!.description).length;
     bool initFav=Functionalities.favoriteNews.favoriteNews.contains(widget.news!.id);
-    widget.news!.description.replaceAll("Published on: ${widget.news!.date}", "").replaceAll("width: 113.211%", "");
+    widget.news!.description=widget.news!.description.substring(widget.news!.description.indexOf("<table"));
 
     return WillPopScope(
       onWillPop: () async{
@@ -123,7 +123,6 @@ class _IndividualNewsState extends State<IndividualNews> {
                             ),
                           ),
                         ),
-                        if (widget.news!.mediaLinkLarge != null)
                           ClipRRect(
                             borderRadius: BorderRadius.only(
                               topLeft: Radius.circular(8),
@@ -215,10 +214,11 @@ class _IndividualNewsState extends State<IndividualNews> {
                                 print(context.tree.attributes['height'].toString());
                                 print(context.tree.attributes['width'].toString());
                                 try {
-                                  if ((double.parse(context.tree.attributes['height'].toString()) < 600 ||
-                                      double.parse(context.tree.attributes['width'].toString()) < 400)&&context.tree.attributes['src']!.contains("x")) {
+
                                     if (!context.tree.attributes['src'].toString().contains('Stamping') &&
                                         !context.tree.attributes['src'].toString().contains('Logo')) {
+                                      if ((double.parse(context.tree.attributes['height'].toString()) < 600 ||
+                                          double.parse(context.tree.attributes['width'].toString()) < 400)&&context.tree.attributes['src']!.contains("x")) {
                                       String src = context.tree.attributes['src'].toString();
                                       String imageName = src.substring(
                                           src.lastIndexOf('/'), src.length);
@@ -235,12 +235,14 @@ class _IndividualNewsState extends State<IndividualNews> {
                                     print(originalPic);
                                   }
                                   //print(originalPic);
+                                    if(context.tree.attributes['src'].toString().contains('Stamping')||context.tree.attributes['src'].toString().contains("Logo")){context.tree.attributes['height']="100";context.tree.attributes['width']="100";}
 
-                                  return InteractiveViewsImage(
+                                    return InteractiveViewsImage(
                                       context.tree.attributes, originalPic);
                                 } catch (e) {
                                   print(e);
-                                  // print(attributes['src']);
+                                  if(context.tree.attributes['src'].toString().contains('Stamping')||context.tree.attributes['src'].toString().contains("Logo")){context.tree.attributes['height']="100";context.tree.attributes['width']="100";}
+// print(attributes['src']);
                                   // print(originalPic);
                                   return InteractiveViewsImage(
                                       context.tree.attributes, context.tree.attributes['src'].toString());
@@ -311,67 +313,73 @@ class _InteractiveViewsImageState extends State<InteractiveViewsImage> {
     bool panEnabled=false;
     // print(src);
     // print(attributes['src']);
-
-    return InteractiveViewer(
-      minScale: 1,
-      onInteractionUpdate: (ScaleUpdateDetails scal){
-        var myScale=scal.scale;
-        if(myScale>1 && panEnabled==false){
-          setState(() {
-            panEnabled=true;
-          });
-        }
-        else if(myScale<=1 && panEnabled==true){
-          setState(() {
-            panEnabled=false;
-          });
-        }
-      },
-      panEnabled: panEnabled,
-      maxScale: 2.5,
-      scaleEnabled: true,
-      constrained: true,
-      boundaryMargin: EdgeInsets.all(40),
-      child: Center(
-        child: Container(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.all(Radius.circular(2.0)),
-            border: (!widget.src.contains("Stamping") && !widget.src.contains('Logo'))
-                ? Border.all(
-                    width: 1,
-                    color: Colors.blueAccent,
-                  )
-                : null,
-          ),
-          height: (double.parse(widget.attributes['height'].toString()) > 600)
-              ? 600
-              : double.parse(widget.attributes['height'].toString()),
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 15),
-            child: CachedNetworkImage(
-              placeholder: (context, url) => Center(
-                child: SizedBox(
-                  width: 40.0,
-                  height: 40.0,
-                  child: new CircularProgressIndicator(),
-                ),
+    try {
+      return InteractiveViewer(
+        minScale: 1,
+        onInteractionUpdate: (ScaleUpdateDetails scal) {
+          var myScale = scal.scale;
+          if (myScale > 1 && panEnabled == false) {
+            setState(() {
+              panEnabled = true;
+            });
+          }
+          else if (myScale <= 1 && panEnabled == true) {
+            setState(() {
+              panEnabled = false;
+            });
+          }
+        },
+        panEnabled: panEnabled,
+        maxScale: 2.5,
+        scaleEnabled: true,
+        constrained: true,
+        boundaryMargin: EdgeInsets.all(40),
+        child: Center(
+          child: Container(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.all(Radius.circular(2.0)),
+              border: (!widget.src.contains("Stamping") &&
+                  !widget.src.contains('Logo'))
+                  ? Border.all(
+                width: 1,
+                color: Colors.blueAccent,
+              )
+                  : null,
+            ),
+            height: (double.parse(widget.attributes['height'].toString()) > 600)
+                ? 600
+                : double.parse(widget.attributes['height'].toString()),
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: 15),
+              child: CachedNetworkImage(
+                placeholder: (context, url) =>
+                    Center(
+                      child: SizedBox(
+                        width: 40.0,
+                        height: 40.0,
+                        child: new CircularProgressIndicator(),
+                      ),
+                    ),
+                errorWidget: (context, url, error) => Icon(Icons.error),
+                fit: BoxFit.fill,
+                imageUrl: widget.src,
+                width: widget.attributes['src'].toString().contains("Stamping")
+                    ? 80
+                    : double.parse(widget.attributes['width'].toString()),
+                height: widget.attributes['src'].toString().contains("Stamping")
+                    ? 80
+                    : ((double.parse(widget.attributes['height'].toString()) <
+                    400)
+                    ? 600
+                    : double.parse(widget.attributes['height'].toString())),
               ),
-              errorWidget: (context, url, error) => Icon(Icons.error),
-              fit: BoxFit.fill,
-              imageUrl: widget.src,
-              width: widget.attributes['src'].toString().contains("Stamping")
-                  ? 80
-                  : double.parse(widget.attributes['width'].toString()),
-              height: widget.attributes['src'].toString().contains("Stamping")
-                  ? 80
-                  : ((double.parse(widget.attributes['height'].toString()) < 400)
-                      ? 600
-                      : double.parse(widget.attributes['height'].toString())),
             ),
           ),
         ),
-      ),
-    );
+      );
+    }catch(e){
+      return InteractiveViewer(child: Text(""),);
+    }
   }
 }
 

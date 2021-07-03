@@ -6,13 +6,15 @@ class SmallCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.only(right: 10),
+      padding: EdgeInsets.only(right: 5),
       child: Container(
         child: Padding(
-          padding: EdgeInsets.all(5),
-          child: Text(
-            text,
-            style: TextStyle(fontSize: 12),
+          padding: EdgeInsets.all(3),
+          child: Center(
+            child: Text(
+              text,
+              style: TextStyle(fontSize: 10),
+            ),
           ),
         ),
         decoration: BoxDecoration(

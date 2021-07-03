@@ -42,7 +42,9 @@ dependencies:
   shared_preferences: any
   flutter_local_notifications: ^1.4.4+2
   background_fetch: ^0.7.2
+  top_snackbar_flutter: ^1.0.0
   provider: ^5.0.0
+  connectivity: ^3.0.6
   share: ^2.0.1
 dev_dependencies:
   flutter_test:

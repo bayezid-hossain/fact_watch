@@ -7,7 +7,7 @@ import '../models/News.dart';
 class CategorizedNews extends StatefulWidget {
 
   final int id;
-  CategorizedNews(@required this.id);
+  CategorizedNews(this.id);
   @override
   _CategorizedNewsState createState() => _CategorizedNewsState();
 }

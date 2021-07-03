@@ -1,4 +1,3 @@
-import 'dart:convert';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fact_watch/functions/functionalities.dart';
@@ -63,9 +62,9 @@ class _ViewFavoritesState extends State<ViewFavorites> with RouteAware{
                       onTap: () async {
                         final value= await Navigator.push(context,
                             MaterialPageRoute(builder: (context) => IndividualNews(news[index])));
-                       // print("Favorite Changed: "+value);
-                        if(value=="true")setState(() {
-
+                        print(value);
+                        if(value)setState(() {
+                          print(value);
                         });
                       },
                       child: Column(

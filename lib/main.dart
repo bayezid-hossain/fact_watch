@@ -17,8 +17,10 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       navigatorKey: navigatorKey,
+
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+       // primarySwatch: Colors.blue,
+        primaryColor: Colors.white,
       ),
       routes: {
         '/': (context) => SplashScreen(),
