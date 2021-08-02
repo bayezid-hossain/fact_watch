@@ -105,8 +105,6 @@ Drawer getDrawer(BuildContext context) {
                  MaterialPageRoute(builder: (context) => CategorizedNews(277)));}),
         getNormalRow("লেখাজোখা",(){Navigator.push(context,
             MaterialPageRoute(builder: (context) => CategorizedNews(259)));}),
-        getNormalRow("ফ্যাক্টওয়াচ ভিডিও", () {Navigator.push(context,
-            MaterialPageRoute(builder: (context) => CategorizedNews(278)));}),
         ExpansionTile(
           initiallyExpanded: true,
           childrenPadding: EdgeInsets.only(left: 18),

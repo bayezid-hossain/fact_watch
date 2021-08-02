@@ -1,5 +1,5 @@
 import 'dart:convert';
-
+import 'package:fact_watch/views/raisedGradientButton.dart';
 import 'package:fact_watch/functions/functionalities.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -49,6 +49,7 @@ class HomePageData extends StatelessWidget {
                                       itemCount: (snapshot as AsyncSnapshot).data.length,
                                       itemBuilder: (BuildContext context, int index) {
                                         try {
+
                                           return NewsExample(
                                             news: snapshot.data[index],
                                             big: ((index % 5) == 0) ? true : false,
@@ -108,6 +109,29 @@ class HomePageData extends StatelessWidget {
                     ]);
                   } else
                     try {
+                      if(index==-2){
+                        return Column(children: [
+                          SizedBox(
+                            width: double.infinity,
+                            child: RaisedGradientButton(
+                                child: Text(
+                                  'Latest',
+                                  style: TextStyle(color: Colors.black),
+                                ),
+                                gradient: LinearGradient(
+                                  colors: <Color>[Colors.yellow, Colors.white],
+                                ),
+                                onPressed: (){
+                                  print('button clicked');
+                                }
+                            ) as Widget,
+                          ),
+                          NewsExample(
+                            news:news[index],
+                            big: ((index % 5) == 0) ? true : false,
+                          )
+                        ],);
+                      }
                       return NewsExample(
                         news: news[index],
                         big: ((index % 5) == 0) ? true : false,

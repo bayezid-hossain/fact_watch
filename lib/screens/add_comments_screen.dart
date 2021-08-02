@@ -1,6 +1,8 @@
 import 'dart:convert';
 
 import 'package:fact_watch/models/Comment.dart';
+import 'package:fact_watch/models/User.dart';
+import 'package:fact_watch/screens/userInfoPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
@@ -71,16 +73,23 @@ class _AddCommentsScreenState extends State<AddCommentsScreen> {
                     ),
                   ),
                 ),
-                InkWell(
-                  child: Icon(
-                    Icons.send,
-                    size: 20,
+                Padding(
+                  padding: EdgeInsets.all(10),
+                  child: InkWell(
+                    child: Icon(
+                      Icons.send,
+                      size: 20,
+                    ),
+                    onTap: () async {
+                      User user=Functionalities.user;
+                      if(user.name=="" || user.email==""){
+                        Navigator.push(context,MaterialPageRoute(builder: (context)=>UserInfoPage(comment:true)));
+                      }
+                      var response = await postData(
+                          commentText, "", "", widget.id, "website");
+                      print(response);
+                    },
                   ),
-                  onTap: () async {
-                    var response = await postData(
-                        commentText, "", "", widget.id, "website");
-                    print(response);
-                  },
                 )
               ],
             ),

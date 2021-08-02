@@ -1,4 +1,5 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:fact_watch/views/newsTileSmall.dart';
 import 'package:flutter/material.dart';
 import 'package:fact_watch/models/News.dart';
 import 'package:flutter/rendering.dart';
@@ -36,8 +37,9 @@ class _IndividualNewsState extends State<IndividualNews> {
   @override
   Widget build(BuildContext context) {
     int totalTables="<table".allMatches(widget.news!.description).length;
+    int index=Functionalities.allNews.indexOf(Functionalities.newsMap[widget.news!.id] as News) ;
     bool initFav=Functionalities.favoriteNews.favoriteNews.contains(widget.news!.id);
-    widget.news!.description=widget.news!.description.substring(widget.news!.description.indexOf("<table"));
+    try{widget.news!.description=widget.news!.description.substring(widget.news!.description.indexOf("<table"));}catch(e){};
 
     return WillPopScope(
       onWillPop: () async{
@@ -56,12 +58,12 @@ class _IndividualNewsState extends State<IndividualNews> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Text(
-                    "Published on: ${widget.news!.date}",
-                    style: TextStyle(
-                      fontSize: 12,
-                    ),
-                  ),
+                  // Text(
+                  //   "Published on: ${widget.news!.date}",
+                  //   style: TextStyle(
+                  //     fontSize: 12,
+                  //   ),
+                  // ),
                 ],
               ),
               Row(
@@ -118,7 +120,8 @@ class _IndividualNewsState extends State<IndividualNews> {
                             style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
-                              fontStyle: FontStyle.italic,
+                              //fontStyle: FontStyle.italic,
+                              fontFamily: 'Kalpurush',
                               color: Colors.black,
                             ),
                           ),
@@ -198,6 +201,7 @@ class _IndividualNewsState extends State<IndividualNews> {
                               "p": Style(
                                 margin: EdgeInsets.symmetric(
                                     horizontal: 0, vertical: 20),
+                                fontFamily: "Kalpurush",
                               ),
                               "img": Style(
                                 padding: EdgeInsets.symmetric(vertical: 10),
@@ -288,7 +292,34 @@ class _IndividualNewsState extends State<IndividualNews> {
                 ),
                 SizedBox(
                   height: 10,
-                )
+                ),
+                Text("আরও দেখুন ..",style: TextStyle(fontSize: 18,fontWeight: FontWeight.bold),),
+                Divider(height: 10,),
+                (index==0)?SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      NewsTileSmall(news: Functionalities.allNews[index+1], removeTile: false, function: (){}),
+                      NewsTileSmall(news: Functionalities.allNews[index+2], removeTile: false, function: (){}),
+                    ],
+                  ),
+                ):(index!=Functionalities.allNews.length-1)?SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      NewsTileSmall(news: Functionalities.allNews[index-1], removeTile: false, function: (){}),
+                      NewsTileSmall(news: Functionalities.allNews[index+1], removeTile: false, function: (){}),
+                    ],
+                  ),
+                ):SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      NewsTileSmall(news: Functionalities.allNews[index-1], removeTile: false, function: (){}),
+                      NewsTileSmall(news: Functionalities.allNews[index-2], removeTile: false, function: (){}),
+                    ],
+                  ),
+                ),
               ],
             ),
           ),

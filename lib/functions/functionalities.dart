@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:fact_watch/models/User.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -14,12 +15,14 @@ import '../views/favoriteList.dart';
 class Functionalities {
   static String currentRoute = "HomePage";
   static String previousRoute = "null";
+  static User user=new User(website: "",name: "",email: "");
   static List<News> allNews = [];
   static List<News> videos = [];
   static Map<int, News> newsMap = {};
   static Map<int, String> categories = {};
   static String initialContent = "";
   static FavoriteList favoriteNews = FavoriteList();
+  static String urlToSite="https://dev.factwatch.org/wp-json/wp/v2/";
   static saveLastNewsId(int id) async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setInt("lastId", id);
@@ -74,7 +77,7 @@ class Functionalities {
   }
   static getSelectedNews() async {
     var newsIds = await NetworkHelper(
-            'https://www.fact-watch.org/web/wp-json/wp/v2/posts?per_page=100&_fields=id')
+            '${urlToSite}posts?per_page=100&_fields=id')
         .getData();
     int? lastId = await Functionalities.getLastNewsId();
     String query = "";
@@ -89,7 +92,7 @@ class Functionalities {
 
     if (query != "") {
       var newNews = await NetworkHelper(
-              'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
+              '${urlToSite}posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
           .getData();
       formatNews(newNews);
       mapNews();
@@ -111,21 +114,26 @@ class Functionalities {
       content = content
           .replaceAll('<p>&nbsp;</p>', "")
           .replaceAll("&#8217;", " ")
-          .replaceAll("&#8216;", " ");
+          .replaceAll("&#8216;", " ").replaceAll("search.ulab", "fwatch.bangladesh");
 
       id = singleNews['id'];
       date = singleNews['date']
           .toString()
           .substring(0, singleNews['date'].toString().indexOf('T'));
-      date = new DateFormat("MMMM d, yyyy").format(DateTime.parse(date));
+      String dateFormatted = new DateFormat("MMMM d, yyyy").format(DateTime.parse(date));
       content = content
-          .replaceAll(date, "")
-          .replaceAll('[$date]', "")
+          .replaceAll(dateFormatted, "")
+          .replaceAll('[$dateFormatted]', "")
           .replaceAll("Published on:", "")
           .replaceAll("&#8217;", " ")
           .replaceAll("&#8211;", "")
           .replaceAll("&#8220;", "")
           .replaceAll("&#8221;", "");
+      date = new DateFormat("MMMM d,yyyy").format(DateTime.parse(date));
+      content = content
+          .replaceAll(dateFormatted, "")
+          .replaceAll('[$dateFormatted]', "").replaceAll("&nbsp;"," ");
+
       title = singleNews['title']['rendered']
           .replaceAll("&#8217;", " ")
           .replaceAll("&#8216;", " ");
@@ -135,7 +143,7 @@ class Functionalities {
           .replaceAll('[$date]', "")
           .replaceAll("&hellip; </p>", "...")
           .replaceAll("&#8217;", " ")
-          .replaceAll("&#8216;", " ");
+          .replaceAll("&#8216;", " ").replaceAll("&nbsp;"," ");
       excerpt = excerpt
           .replaceAll("Published on: ", "")
           .replaceAll("&#8211;" "", "")
@@ -146,7 +154,7 @@ class Functionalities {
       title = title
           .replaceAll("&#8211;", "")
           .replaceAll("&#8220;", "")
-          .replaceAll("&#8221;", "");
+          .replaceAll("&#8221;", "").replaceAll("&nbsp;"," ");
 
       String categories = singleNews['categories'].toString();
       //  print(categories);
@@ -165,7 +173,7 @@ class Functionalities {
           excerpt: excerpt,
           mediaLinkLarge: mediumLarge,
           thumbnail: thumbnail,
-          date: date,
+          date: dateFormatted,
           description: content,
           categories: categories));
       newNews.add(News(
@@ -174,7 +182,7 @@ class Functionalities {
           excerpt: excerpt,
           mediaLinkLarge: mediumLarge,
           thumbnail: thumbnail,
-          date: date,
+          date: dateFormatted,
           description: content,
           categories: categories));
     }
@@ -210,7 +218,7 @@ class Functionalities {
 
   static Future<void> getInitNews() async {
     var newsData = await NetworkHelper(
-            'https://www.fact-watch.org/web/wp-json/wp/v2/posts?per_page=100&_fields=categories,id,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
+            '${urlToSite}posts?per_page=50&_fields=categories,id,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
         .getData();
 
     formatNews(newsData);
@@ -223,7 +231,7 @@ class Functionalities {
   static Future<List<News>> fetchNewsBySearch(String searchText) async {
     List<News> searchResult = [];
     List<dynamic> newsIds = await NetworkHelper(
-            'https://www.fact-watch.org/web/wp-json/wp/v2/posts?search=$searchText&per_page=100&_fields=id')
+            '${urlToSite}posts?search=$searchText&per_page=100&_fields=id')
         .getData();
     List<int> intList = newsIds.map((s) => s['id'] as int).toList();
     allNews.forEach((element) {
@@ -243,7 +251,7 @@ class Functionalities {
 
       if (query != "") {
         var newNews = await NetworkHelper(
-                'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
+                '${urlToSite}posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
             .getData();
         searchResult.addAll(formatNews(newNews));
 
@@ -257,7 +265,7 @@ class Functionalities {
   static Future<List<News>> fetchNewsByCategory(int id) async {
     List<News> searchResult = [];
     List<dynamic> newsIds = await NetworkHelper(
-            'https://www.fact-watch.org/web/wp-json/wp/v2/posts?categories=$id&per_page=100&_fields=id')
+            '${urlToSite}posts?categories=$id&per_page=100&_fields=id')
         .getData();
 
     List<int> intList = newsIds.map((s) => s['id'] as int).toList();
@@ -278,7 +286,7 @@ class Functionalities {
 
       if (query != "") {
         var newNews = await NetworkHelper(
-                'https://www.fact-watch.org/web/wp-json/wp/v2/posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
+                '${urlToSite}posts?${query}_fields=id,categories,title,content,date,excerpt,_links&_embed=wp:featuredmedia')
             .getData();
         searchResult.addAll(formatNews(newNews));
 
@@ -301,6 +309,7 @@ class Functionalities {
   }
 
   static getNews() async {
+
     initialContent = await getInitialContent();
     if (initialContent != "")
       await getSelectedNews();
@@ -311,6 +320,7 @@ class Functionalities {
     favs.forEach((element) {
       favoriteNews.favoriteNews.add(element);
     });
+    await loadUser();
     // bool firstRun = await checkFirstRun();
     // try {
     //   initialContent = await getInitialContent();
@@ -336,9 +346,18 @@ class Functionalities {
   static Future<bool> checkFirstRun() async {
     final prefs = await SharedPreferences.getInstance();
     bool firstRun = prefs.getBool('firstRun') ?? true;
-    return firstRun;
+    return true;
   }
-
+  static loadUser()async{
+    SharedPreferences pref = await SharedPreferences.getInstance();
+    dynamic test =pref.getString('user');
+    if(test!=null){
+      Map<String, dynamic> userMap = jsonDecode(test);
+      var userLoad = User.fromJson(userMap);
+      user=userLoad;
+    }
+    print(user.toString());
+  }
   static saveFirstRun() async {
     final prefs = await SharedPreferences.getInstance();
     prefs.setBool("firstRun", false);
@@ -374,7 +393,7 @@ class Functionalities {
       : throw 'Could not launch $_url';
   static getCategories() async {
     var categories = await NetworkHelper(
-            'https://www.fact-watch.org/web/wp-json/wp/v2/categories?_fields=id,name')
+            '${urlToSite}categories?_fields=id,name')
         .getData();
     for (var category in categories) {
       Functionalities.categories[category['id']] = category['name'];

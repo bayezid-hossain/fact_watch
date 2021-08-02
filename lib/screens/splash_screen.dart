@@ -4,6 +4,8 @@ import 'package:fact_watch/screens/individual_news.dart';
 import 'package:fact_watch/main.dart';
 
 import 'package:connectivity/connectivity.dart';
+import 'package:fact_watch/screens/userInfoPage.dart';
+import 'package:fact_watch/views/FirstRunUserInfoPage.dart';
 import 'package:flutter/services.dart';
 
 import '../functions/functionalities.dart';
@@ -83,13 +85,14 @@ class _SplashScreenState extends State<SplashScreen>
       await Functionalities.getNews();
       await Functionalities.getCategories();
 
-      Navigator.pushReplacement(
+      if(!firstRun)Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => HomePage()));
+      else Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>FirstRunUserInfoPage()));
     } catch (e) {
       if (e.toString().contains("socket") || e.toString().contains("Socket")) {
         showDefaultSnackbar(_key, "Internet Connection Error");
       }
-      else showDefaultSnackbar(_key,e.toString());
+      //else showDefaultSnackbar(_key,e.toString());
     }
   }
 

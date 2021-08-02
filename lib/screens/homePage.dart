@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:fact_watch/screens/userInfoPage.dart';
+import 'package:fact_watch/screens/videoNews.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../functions/constants.dart' as constants;
@@ -9,6 +11,7 @@ import 'package:ff_navigation_bar/ff_navigation_bar.dart';
 import '../models/News.dart';
 
 import '../views/keepAlivePage.dart';
+import 'categorizedNewsPage.dart';
 import 'viewFavorites.dart';
 class HomePage extends StatefulWidget {
   @override
@@ -160,6 +163,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           children: [
             KeepAlivePage(child: HomePageData(searchContent, length,searchText,"")),
             KeepAlivePage(child: ViewFavorites()),
+            KeepAlivePage(child: VideoNews(278)),
+            KeepAlivePage(child: UserInfoPage(comment: false,)),
             //IndividualNews(Functionalities.allNews[0]),Indiv
           ],
           onPageChanged: onPageChanged,
