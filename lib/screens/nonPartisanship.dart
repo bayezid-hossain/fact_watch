@@ -24,12 +24,57 @@ class NonPartisanship extends StatelessWidget {
           children: [
             SingleChildScrollView(
               child: Html(data: nonPartisanBanglaDescription,
+                style: {
+                'p':Style(
+                  fontFamily: "HindSiliguri",
+                ),'li':Style(
+                    fontFamily: "HindSiliguri",
+                  ),
+
+                  'h1':Style(
+                      fontFamily: "BalooDa2"
+                  ),
+                  'h2':Style(
+                      fontFamily: "BalooDa2"
+                  ),
+                  'h3':Style(
+                      fontFamily: "BalooDa2"
+                  ),
+                  'h4':Style(
+                      fontFamily: "BalooDa2"
+                  ),
+                  'a':Style(
+                    fontFamily: "HindSiliguri"
+                  )
+                },
 
               ),
             ),
 
             SingleChildScrollView(
-              child: Html(data: nonPartisanEnglishDescription,),
+              child: Html(data: nonPartisanEnglishDescription, style: {
+                'p':Style(
+                  fontFamily: "HindSiliguri",
+                ),
+                'li':Style(
+                  fontFamily: "HindSiliguri",
+                ),
+                'h1':Style(
+                    fontFamily: "BalooDa2"
+                ),
+                'h2':Style(
+                    fontFamily: "BalooDa2"
+                ),
+                'h3':Style(
+                    fontFamily: "BalooDa2"
+                ),
+                'h4':Style(
+                    fontFamily: "BalooDa2"
+                ),
+                'a':Style(
+                    fontFamily: "HindSiliguri"
+                )
+              },),
             ),
           ],
         ),

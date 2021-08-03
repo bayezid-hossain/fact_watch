@@ -14,10 +14,10 @@ class CCPolicy extends StatelessWidget {
 
           tabs: [
             Tab(
-              child: Text("বাংলা",style: TextStyle(color: Colors.black,fontSize: 16),),
+              child: Text("বাংলা",style: TextStyle(color: Colors.black,fontSize: 16,fontFamily: 'BalooDa2'),),
 
             ),Tab(
-              child: Text("English",style: TextStyle(color: Colors.black,fontSize: 15),),
+              child: Text("English",style: TextStyle(color: Colors.black,fontSize: 15,fontFamily: 'BalooDa2'),),
             )
           ],
         ),
@@ -27,6 +27,29 @@ class CCPolicy extends StatelessWidget {
               child: Html(data: ccBangla,onLinkTap: (url,_,__,___) {
                 Functionalities.launchURL(url!);
               },
+                style: {
+                  'p':Style(
+                    fontFamily: "HindSiliguri",
+                  ),'li':Style(
+                    fontFamily: "HindSiliguri",
+                  ),
+
+                  'h1':Style(
+                      fontFamily: "BalooDa2"
+                  ),
+                  'h2':Style(
+                      fontFamily: "BalooDa2"
+                  ),
+                  'h3':Style(
+                      fontFamily: "BalooDa2"
+                  ),
+                  'h4':Style(
+                      fontFamily: "BalooDa2"
+                  ),
+                  'a':Style(
+                      fontFamily: "HindSiliguri"
+                  )
+                },
 
               ),
             ),
@@ -34,6 +57,32 @@ class CCPolicy extends StatelessWidget {
             SingleChildScrollView(
               child: Html(data: ccEnglish,onLinkTap: (url,_,__,___) {
                 Functionalities.launchURL(url!);
+              },
+                style: {
+              'p':Style(
+              fontFamily: "HindSiliguri",
+              ),'li':Style(
+              fontFamily: "HindSiliguri",
+              ),
+
+              'h1':Style(
+              fontFamily: "BalooDa2"
+              ),
+              'h2':Style(
+              fontFamily: "BalooDa2"
+              ),
+              'h3':Style(
+              fontFamily: "BalooDa2"
+              ),
+                  'h4':Style(
+                      fontFamily: "BalooDa2"
+                  ),
+                  'h5':Style(
+                      fontFamily: "BalooDa2",
+                  ),
+              'a':Style(
+              fontFamily: "HindSiliguri"
+              )
               },),
             ),
           ],

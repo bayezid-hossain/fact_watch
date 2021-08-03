@@ -9,7 +9,8 @@ import 'package:fact_watch/widgets/widgets.dart';
 import 'homePage.dart';
 class UserInfoPage extends StatefulWidget {
   final bool comment;
-  UserInfoPage({required this.comment});
+  final bool homePage;
+  UserInfoPage({required this.comment,required this.homePage});
   @override
   _UserInfoPageState createState() => _UserInfoPageState();
 }
@@ -112,7 +113,7 @@ controller: email,
                       Functionalities.user=userInfo;
 // store your string list in shared prefs
 
-                      widget.comment?Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>HomePage())):Navigator.pop(context);
+                      if(!widget.homePage)widget.comment?Navigator.pop(context):Navigator.pushReplacement(context,MaterialPageRoute(builder: (context)=>HomePage()));
                     },),
                     SizedBox(
                       height: 30,

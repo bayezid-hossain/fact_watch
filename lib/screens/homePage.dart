@@ -96,6 +96,7 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                   ),
                 )
               : TextField(
+            style: TextStyle(fontFamily: "HindSiliguri"),
                   onChanged: searchNewsByTitle,
                   focusNode: focusNode,
                   decoration: InputDecoration(
@@ -163,8 +164,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
           children: [
             KeepAlivePage(child: HomePageData(searchContent, length,searchText,"")),
             KeepAlivePage(child: ViewFavorites()),
-            KeepAlivePage(child: VideoNews(278)),
-            KeepAlivePage(child: UserInfoPage(comment: false,)),
+            KeepAlivePage(child: VideoNews(4)),
+            KeepAlivePage(child: UserInfoPage(comment: false,homePage: true,)),
             //IndividualNews(Functionalities.allNews[0]),Indiv
           ],
           onPageChanged: onPageChanged,

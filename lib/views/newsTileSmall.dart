@@ -66,7 +66,7 @@ class _NewsTileSmallState extends State<NewsTileSmall> {
                               style: TextStyle(
                                 fontSize: 17,
                                 color: Colors.black,
-                                fontWeight: FontWeight.bold,
+                                fontWeight: FontWeight.bold, fontFamily: "BalooDa2",
                               ),
                             ),
                           ),
@@ -110,7 +110,9 @@ class _NewsTileSmallState extends State<NewsTileSmall> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Text("Published on ${widget.news!.date}"),
+                              Text("Published on ${widget.news!.date}",style: TextStyle(
+                                fontFamily: "BalooDa2",
+                              ),),
                             ],
                           ),
                           Row(

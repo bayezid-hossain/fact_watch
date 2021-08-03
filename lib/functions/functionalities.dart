@@ -14,6 +14,7 @@ import '../views/favoriteList.dart';
 
 class Functionalities {
   static String currentRoute = "HomePage";
+  static bool commentLoading=false;
   static String previousRoute = "null";
   static User user=new User(website: "",name: "",email: "");
   static List<News> allNews = [];
@@ -149,7 +150,7 @@ class Functionalities {
           .replaceAll("&#8211;" "", "")
           .replaceAll("&#8211;", "")
           .replaceAll("&#8220;", "")
-          .replaceAll("&#8221;", "");
+          .replaceAll("&#8221;", "").replaceAll("</p>","");
 
       title = title
           .replaceAll("&#8211;", "")
@@ -346,7 +347,7 @@ class Functionalities {
   static Future<bool> checkFirstRun() async {
     final prefs = await SharedPreferences.getInstance();
     bool firstRun = prefs.getBool('firstRun') ?? true;
-    return true;
+    return firstRun;
   }
   static loadUser()async{
     SharedPreferences pref = await SharedPreferences.getInstance();
@@ -398,21 +399,21 @@ class Functionalities {
     for (var category in categories) {
       Functionalities.categories[category['id']] = category['name'];
     }
-    Functionalities.categories[252] = "আইন-আদালত";
-    Functionalities.categories[253] = "তথ্য যাচাই";
-    Functionalities.categories[255] =  "জন উদ্যোগ";
-    Functionalities.categories[259] = "লেখাজোখা";
-    Functionalities.categories[261] = "তথ্য যাচাই";
-    Functionalities.categories[265] =  "জনস্বাস্থ্য";
-    Functionalities.categories[266] = "বিজ্ঞান ও পরিবেশ";
-    Functionalities.categories[271] =  "করোনা তথ্য যাচাই";
-    Functionalities.categories[273] = "জরুরি পরামর্শ";
-    Functionalities.categories[276] = "ফ্যাক্টওয়াচ ভিডিও";
-    Functionalities.categories[277] = "বিজ্ঞাপন যাচাই";
-    Functionalities.categories[278] = "স্বাস্থ্য";
-    Functionalities.categories[280] = "বাংলাদেশ";
-    Functionalities.categories[282] =  "করোনা মহামারি";
-    Functionalities.categories[283] = "ফ্যাক্ট ফাইল";
+    // Functionalities.categories[252] = "আইন-আদালত";
+    // Functionalities.categories[253] = "তথ্য যাচাই";
+    // Functionalities.categories[255] =  "জন উদ্যোগ";
+    // Functionalities.categories[259] = "লেখাজোখা";
+    // Functionalities.categories[261] = "তথ্য যাচাই";
+    // Functionalities.categories[265] =  "জনস্বাস্থ্য";
+    // Functionalities.categories[266] = "বিজ্ঞান ও পরিবেশ";
+    // Functionalities.categories[271] =  "করোনা তথ্য যাচাই";
+    // Functionalities.categories[273] = "জরুরি পরামর্শ";
+    // Functionalities.categories[276] = "ফ্যাক্টওয়াচ ভিডিও";
+    // Functionalities.categories[277] = "বিজ্ঞাপন যাচাই";
+    // Functionalities.categories[278] = "স্বাস্থ্য";
+    // Functionalities.categories[280] = "বাংলাদেশ";
+    // Functionalities.categories[282] =  "করোনা মহামারি";
+    // Functionalities.categories[283] = "ফ্যাক্ট ফাইল";
     // print(Functionalities.categories);
     // print(allNews[allNews.length - 1].id);
   }

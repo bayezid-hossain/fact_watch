@@ -19,9 +19,9 @@ class _NewsTileState extends State<NewsTile> {
   @override
   Widget build(BuildContext context) {
     print(widget.news!.categories);
-    widget.news!.excerpt=widget.news!.excerpt.replaceAll("Published on: ","").replaceAll("&#8211;""","");
+    widget.news!.excerpt=widget.news!.excerpt.replaceAll("Published on: ","").replaceAll("&#8211;""","").replaceAll("</p>", "");
 
-    widget.news!.title=widget.news!.title.replaceAll("&#8211;","").replaceAll("&#8220;", "").replaceAll("&#8221;", "");
+    widget.news!.title=widget.news!.title.replaceAll("&#8211;","").replaceAll("</p>", "").replaceAll("&#8220;", "").replaceAll("&#8221;", "");
     return InkWell(
       splashColor: Colors.blueAccent,
       onTap: () async {
@@ -79,7 +79,7 @@ class _NewsTileState extends State<NewsTile> {
                       style: TextStyle(
                         fontWeight: FontWeight.w700,
                         fontSize: 17,
-                        color: Colors.black,
+                        color: Colors.black, fontFamily: "BalooDa2",
                       ),
                     ),
                   ),
@@ -88,7 +88,7 @@ class _NewsTileState extends State<NewsTile> {
                     child: Text(
                       widget.news!.excerpt,
                       style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.black, fontFamily: "HindSiliguri",
                       ),
                     ),
                   ),

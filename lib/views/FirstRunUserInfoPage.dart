@@ -16,7 +16,7 @@ class FirstRunUserInfoPage extends StatelessWidget {
           ),
         ),
       ),
-      body: UserInfoPage(comment: false,),
+      body: UserInfoPage(comment: false,homePage: false,),
     ));
   }
 }
