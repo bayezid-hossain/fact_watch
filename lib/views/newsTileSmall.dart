@@ -71,7 +71,7 @@ class _NewsTileSmallState extends State<NewsTileSmall> {
                             ),
                           ),
                         ),
-                        if (widget.news!.thumbnail != null)
+                        if (widget.news!.mediaLinkLarge != null)
                           Flexible(
                             flex: 0,
                             child: Padding(
@@ -83,7 +83,7 @@ class _NewsTileSmallState extends State<NewsTileSmall> {
                                 child: CachedNetworkImage(
                                   height: 80,
                                   width: 80,
-                                  imageUrl: widget.news!.thumbnail,
+                                  imageUrl: widget.news!.mediaLinkLarge,
                                   fit: BoxFit.cover,
                                   placeholder: (context, url) => Center(
                                     child: SizedBox(
@@ -137,7 +137,7 @@ class _NewsTileSmallState extends State<NewsTileSmall> {
                                 width: 10,
                               ),
 
-                              FavoriteButton(tableIndex: 1,news: widget.news,removeTile: widget.removeTile,function: widget.function,)
+                              FavoriteButton(news: widget.news,removeTile: widget.removeTile,function: widget.function,)
                             ],
                           )
                         ],

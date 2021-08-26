@@ -29,25 +29,39 @@ class CCPolicy extends StatelessWidget {
               },
                 style: {
                   'p':Style(
-                    fontFamily: "HindSiliguri",
+                    fontFamily: "Kalpurush",
+                      fontSize: FontSize.large
                   ),'li':Style(
-                    fontFamily: "HindSiliguri",
+                      fontFamily: "Kalpurush",
+                      fontSize: FontSize.large
                   ),
 
                   'h1':Style(
-                      fontFamily: "BalooDa2"
+                      fontFamily: "BalooDa2",
+                      fontSize: FontSize.large
+                  ),'strong':Style(
+                      fontFamily: "BalooDa2",
+                      fontSize: FontSize.large,
+                      fontWeight: FontWeight.bold
+                  ),
+                  'td':Style(
+                      fontFamily: "BalooDa2",
+                      fontSize: FontSize.larger
                   ),
                   'h2':Style(
-                      fontFamily: "BalooDa2"
+                      fontFamily: "BalooDa2",
+                      fontSize: FontSize.larger
                   ),
                   'h3':Style(
-                      fontFamily: "BalooDa2"
+                      fontFamily: "BalooDa2",
+                      fontSize: FontSize.larger
                   ),
                   'h4':Style(
-                      fontFamily: "BalooDa2"
+                      fontFamily: "BalooDa2",
+                      fontSize: FontSize.larger
                   ),
                   'a':Style(
-                      fontFamily: "HindSiliguri"
+                      fontFamily: "Kalpurush"
                   )
                 },
 
@@ -60,9 +74,9 @@ class CCPolicy extends StatelessWidget {
               },
                 style: {
               'p':Style(
-              fontFamily: "HindSiliguri",
+              fontFamily: "Kalpurush",
               ),'li':Style(
-              fontFamily: "HindSiliguri",
+              fontFamily: "Kalpurush",
               ),
 
               'h1':Style(
@@ -81,7 +95,7 @@ class CCPolicy extends StatelessWidget {
                       fontFamily: "BalooDa2",
                   ),
               'a':Style(
-              fontFamily: "HindSiliguri"
+              fontFamily: "Kalpurush"
               )
               },),
             ),

@@ -88,7 +88,7 @@ class _NewsTileState extends State<NewsTile> {
                     child: Text(
                       widget.news!.excerpt,
                       style: TextStyle(
-                        color: Colors.black, fontFamily: "HindSiliguri",
+                        color: Colors.black, fontFamily: "Kalpurush",
                       ),
                     ),
                   ),
@@ -129,7 +129,7 @@ class _NewsTileState extends State<NewsTile> {
                             SizedBox(
                               width: 10,
                             ),
-                            FavoriteButton(tableIndex: 1,news: widget.news,removeTile: widget.removeTile,function: widget.function,)
+                            FavoriteButton(news: widget.news,removeTile: widget.removeTile,function: widget.function,)
 
                           ],
                         )

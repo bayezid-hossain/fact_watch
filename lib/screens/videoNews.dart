@@ -18,8 +18,7 @@ class _VideoNewsState extends State<VideoNews> {
 
   @override
   Widget build(BuildContext context) {
-    List<News> categorizedNews=Functionalities.getNewsByCategory(widget.id);
 
-    return Scaffold(body: HomePageData(jsonEncode(categorizedNews),categorizedNews.length,"",widget.id.toString()));
+    return Scaffold(body: HomePageData(widget.id));
   }
 }

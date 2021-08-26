@@ -1,3 +1,4 @@
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:fact_watch/views/newsTileSmall.dart';
 import 'package:flutter/material.dart';
@@ -6,14 +7,13 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:flutter_html/html_parser.dart';
 import 'package:flutter_html/style.dart';
-import 'package:intl/intl.dart';
+import 'package:fact_watch/functions/constants.dart';
 import 'package:share/share.dart';
 import '../functions/functionalities.dart';
 import 'add_comments_screen.dart';
 import '../models/Comment.dart';
 import '../networking/networking.dart';
 import '../views/favoriteButton.dart';
-
 class IndividualNews extends StatefulWidget {
   final News? news;
 
@@ -25,29 +25,14 @@ class IndividualNews extends StatefulWidget {
 
 class _IndividualNewsState extends State<IndividualNews> {
   List<Comment> comments = [];
-  int tableIndex = 1;
-  //double width = MediaQuery. of(widget.context). size. width;
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-    // getComments(widget.news).then((_comments) {
-    //   comments = _comments;
-    // });
-  }
 
   @override
   Widget build(BuildContext context) {
-    int totalTables = "<table".allMatches(widget.news!.description).length;
     int index = Functionalities.allNews
         .indexOf(Functionalities.newsMap[widget.news!.id] as News);
     bool initFav =
         Functionalities.favoriteNews.favoriteNews.contains(widget.news!.id);
-    try {
-      widget.news!.description = widget.news!.description
-          .substring(widget.news!.description.indexOf("<table"));
-    } catch (e) {}
-    ;
+
 
     return WillPopScope(
       onWillPop: () async {
@@ -61,6 +46,7 @@ class _IndividualNewsState extends State<IndividualNews> {
         return false;
       },
       child: Scaffold(
+resizeToAvoidBottomInset: true,
         appBar: AppBar(
           iconTheme: IconThemeData(
             color: Colors.black, //change your color here
@@ -102,7 +88,6 @@ class _IndividualNewsState extends State<IndividualNews> {
                     width: 25,
                   ),
                   FavoriteButton(
-                    tableIndex: tableIndex,
                     news: widget.news,
                     removeTile: false,
                     function: () {},
@@ -177,7 +162,7 @@ class _IndividualNewsState extends State<IndividualNews> {
                                     "Published on: ${widget.news!.date}",
                                     style: TextStyle(
                                       fontSize: 12,
-                                      fontFamily: 'HindSiliguri'
+                                      fontFamily: 'Kalpurush'
                                     ),
                                   ),
                                 ],
@@ -197,11 +182,9 @@ class _IndividualNewsState extends State<IndividualNews> {
                               "table": Style(
                                 backgroundColor: Colors.white,
                                 //width: 1000,
-
                                 width: MediaQuery.of(context).size.width,
-                                border: Border.all(color: Colors.white),
-                                padding: EdgeInsets.symmetric(vertical: 0),
-                                margin: EdgeInsets.symmetric(vertical: 0),
+                                padding: EdgeInsets.symmetric(vertical: 5),
+                                margin: EdgeInsets.symmetric(vertical:5),
                                 wordSpacing: 0,
                                 letterSpacing: 0.1,
                                 //width: double.maxFinite,
@@ -216,12 +199,13 @@ class _IndividualNewsState extends State<IndividualNews> {
                                 padding: EdgeInsets.symmetric(
                                     vertical: 0, horizontal: 10),
                                 alignment: Alignment.center,
+                                border:Border.all(width: 0.1,color: Colors.black),
                                 //width: double.maxFinite,
                               ),
                               "p": Style(
                                 margin: EdgeInsets.symmetric(
                                     horizontal: 0, vertical: 20),
-                                fontFamily: "HindSiliguri",
+                                fontFamily: "Kalpurush",
                               ),
                               "img": Style(
                                 padding: EdgeInsets.symmetric(vertical: 10),
@@ -233,12 +217,12 @@ class _IndividualNewsState extends State<IndividualNews> {
                                 alignment: Alignment.center,
                                 textAlign: TextAlign.center,
                               ),'p':Style(
-                                fontFamily: "HindSiliguri",
+                                fontFamily: "Kalpurush",
                                 padding: EdgeInsets.only(bottom: 5),
                                 wordSpacing: 2,
                                 lineHeight: LineHeight.number(1.3)
                               ),'li':Style(
-                                fontFamily: "HindSiliguri",
+                                fontFamily: "Kalpurush",
                               ),
 
                               'h1':Style(
@@ -257,7 +241,11 @@ class _IndividualNewsState extends State<IndividualNews> {
                                 fontFamily: "BalooDa2",
                               ),
                               'a':Style(
-                                  fontFamily: "HindSiliguri"
+                                  fontFamily: "Kalpurush"
+                              ),
+                              'iframe':Style(
+                                width: 300,
+                                height: 300,
                               )
                             },
                             //blacklistedElements: ['width'],
@@ -321,11 +309,34 @@ class _IndividualNewsState extends State<IndividualNews> {
 //                               }
 //                             },
                             customRender: {
+                                 "table": (RenderContext context, Widget child,) {
+                                //print("$totalTables,$tableIndex");
+
+                                return SizedBox(
+                                  width: double.infinity,
+                                  child: SingleChildScrollView(
+                                    scrollDirection: Axis.horizontal,
+                                    child: Container(child:(context.tree as TableLayoutElement).toWidget(context),
+                                    padding: EdgeInsets.all(5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.white,
+                                    ),),
+                                    clipBehavior: Clip.antiAliasWithSaveLayer,
+                                  ),
+                                );
+                              },
                               "img": (RenderContext context, Widget child) {
                                 print(context.tree.attributes['src']);
                                 return InteractiveViewsImage(
                                     context.tree.attributes,
                                     context.tree.attributes['src'].toString());
+                              },
+                              "iframe":(RenderContext context,Widget child){
+                                   print(context.tree.attributes['src']);
+                                   return Container(
+                                     height: 300,width:300,
+                                     child: child
+                                   );
                               }
                             },
                           ),
@@ -345,7 +356,7 @@ class _IndividualNewsState extends State<IndividualNews> {
                           },
                           child: Text(
                             "মতামত জানান",
-                            style: TextStyle(fontSize: 22, fontFamily: "HindSiliguri",),
+                            style: TextStyle(fontSize: 22, fontFamily: "Kalpurush",),
                           ),
                         ),
                         SizedBox(
@@ -356,12 +367,12 @@ class _IndividualNewsState extends State<IndividualNews> {
                             child: Text(
                               "আরও দেখুন ..",
                               style: TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold, fontFamily: "HindSiliguri",),
+                                  fontSize: 18, fontWeight: FontWeight.bold, fontFamily: "Kalpurush",),
                             )),
                         Divider(
                           height: 10,
                         ),
-                        (index == 0)
+                        (index <= 0)
                             ? SingleChildScrollView(
                                 child: Column(
                                   mainAxisAlignment: MainAxisAlignment.end,
@@ -411,9 +422,29 @@ class _IndividualNewsState extends State<IndividualNews> {
                                                 .allNews[index - 2],
                                             removeTile: false,
                                             function: () {}),
+
                                       ],
                                     ),
                                   ),
+                        Padding(padding:EdgeInsets.symmetric(vertical: 8),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Divider(),
+                              Divider(),
+                              SizedBox(
+                                height: 20,
+                              ),
+                              Expanded(
+                                child: buildCard(),
+                              ),
+                              Expanded(
+                                child: buildImages(),
+                              )
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -443,8 +474,32 @@ class _InteractiveViewsImageState extends State<InteractiveViewsImage> {
     print(widget.src);
     print(widget.attributes['src']);
     print(widget.attributes['style']);
+    print(widget.attributes['width'].toString());
+    print(widget.attributes['height'].toString());
+
 
     try {
+      if (widget.src.contains("Logo"))
+        return InteractiveViewer(
+          child: Center(
+            child: CachedNetworkImage(
+              imageUrl: widget.src,
+              height: 80,
+              width: 120,
+            ),
+          ),
+        );
+      else if(widget.src.contains("/A.png")||widget.src.contains("/B.png")||widget.src.contains("/C.png")||widget.src.contains("/D.png")||widget.src.contains("/E.png")||widget.src.contains("/F.png")||widget.src.contains("/G.png")||widget.src.contains("/H.png")){
+        return InteractiveViewer(
+          child: Center(
+            child: CachedNetworkImage(
+              imageUrl: widget.src,
+              height: 70,
+              width: 70,
+            ),
+          ),
+        );
+      }
       return InteractiveViewer(
         minScale: 1,
         onInteractionUpdate: (ScaleUpdateDetails scal) {
@@ -463,44 +518,29 @@ class _InteractiveViewsImageState extends State<InteractiveViewsImage> {
         maxScale: 2.5,
         scaleEnabled: true,
         constrained: true,
-        boundaryMargin: EdgeInsets.all(40),
         child: Center(
           child: Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(2.0)),
-              border: !widget.src.contains('Logo')
+              border: (!widget.src.contains('Logo')&&!widget.src.contains(r'/A.png')&&!widget.src.contains(r'/B.png')&&!widget.src.contains(r'/C.png')&&!widget.src.contains(r'/D.png')&&!widget.src.contains(r'/E.png')&&!widget.src.contains(r'/F.png')&&!widget.src.contains(r'/G.png')&&!widget.src.contains(r'/H.png'))
                   ? Border.all(
                       width: 1,
                       color: Colors.blueAccent,
                     )
                   : null,
             ),
-            height: (double.parse(widget.attributes['height'].toString()) > 600)
-                ? 600
-                : double.parse(widget.attributes['height'].toString()),
-            child: Padding(
-              padding: EdgeInsets.symmetric(vertical: 15),
-              child: CachedNetworkImage(
-                placeholder: (context, url) => Center(
-                  child: SizedBox(
-                    width: 40.0,
-                    height: 40.0,
-                    child: new CircularProgressIndicator(),
-                  ),
+            child: CachedNetworkImage(
+              placeholder: (context, url) => Center(
+                child: SizedBox(
+                  width: 40.0,
+                  height: 40.0,
+                  child: new CircularProgressIndicator(),
                 ),
-                errorWidget: (context, url, error) => Icon(Icons.error),
-                fit: BoxFit.fill,
-                imageUrl: widget.src,
-                width: widget.attributes['src'].toString().contains("Logo")
-                    ? 80
-                    : double.parse(widget.attributes['width'].toString()),
-                height: widget.attributes['src'].toString().contains("Logo")
-                    ? 80
-                    : ((double.parse(widget.attributes['height'].toString()) <
-                            400)
-                        ? 600
-                        : double.parse(widget.attributes['height'].toString())),
               ),
+              errorWidget: (context, url, error) => Icon(Icons.error),
+              fit: BoxFit.fill,
+              imageUrl: widget.src,
+
             ),
           ),
         ),

@@ -26,9 +26,9 @@ class NonPartisanship extends StatelessWidget {
               child: Html(data: nonPartisanBanglaDescription,
                 style: {
                 'p':Style(
-                  fontFamily: "HindSiliguri",
+                  fontFamily: "Kalpurush",
                 ),'li':Style(
-                    fontFamily: "HindSiliguri",
+                    fontFamily: "Kalpurush",
                   ),
 
                   'h1':Style(
@@ -44,7 +44,7 @@ class NonPartisanship extends StatelessWidget {
                       fontFamily: "BalooDa2"
                   ),
                   'a':Style(
-                    fontFamily: "HindSiliguri"
+                    fontFamily: "Kalpurush"
                   )
                 },
 
@@ -54,10 +54,10 @@ class NonPartisanship extends StatelessWidget {
             SingleChildScrollView(
               child: Html(data: nonPartisanEnglishDescription, style: {
                 'p':Style(
-                  fontFamily: "HindSiliguri",
+                  fontFamily: "Kalpurush",
                 ),
                 'li':Style(
-                  fontFamily: "HindSiliguri",
+                  fontFamily: "Kalpurush",
                 ),
                 'h1':Style(
                     fontFamily: "BalooDa2"
@@ -72,7 +72,7 @@ class NonPartisanship extends StatelessWidget {
                     fontFamily: "BalooDa2"
                 ),
                 'a':Style(
-                    fontFamily: "HindSiliguri"
+                    fontFamily: "Kalpurush"
                 )
               },),
             ),

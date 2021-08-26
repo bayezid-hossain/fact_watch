@@ -26,14 +26,14 @@ class CategoriesTile extends StatelessWidget {
                   itemCount: categories.length,
                   itemBuilder: (context, index) {
                     int ind = categories[index];
-                    if (ind != 302 && ind != 1 && ind != 317) {
+                    if (ind != 302 && ind != 1 && ind != 317 && (ind<40 || ind>48)) {
                       return InkWell(
                         onTap: (){
     Navigator.push(context,
     MaterialPageRoute(builder: (context) => CategorizedNews(categories[index])));
     },
                         child: SmallCard(
-                            Functionalities.categories[categories[index]].toString()),
+                            Functionalities.categories[ind].toString()),
                       );
                     } else
                       return Text("");

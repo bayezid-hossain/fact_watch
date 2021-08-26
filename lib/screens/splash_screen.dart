@@ -1,11 +1,13 @@
 import 'dart:async';
 import 'dart:convert';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fact_watch/screens/individual_news.dart';
 import 'package:fact_watch/main.dart';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:fact_watch/screens/userInfoPage.dart';
 import 'package:fact_watch/views/FirstRunUserInfoPage.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/services.dart';
 
 import '../functions/functionalities.dart';
@@ -79,6 +81,20 @@ class _SplashScreenState extends State<SplashScreen>
 
   void startApp() async {
     firstRun = await Functionalities.checkFirstRun();
+
+      FirebaseMessaging.instance.unsubscribeFromTopic("fact").then((value) {
+        print("unsubscribed");
+        FirebaseMessaging.instance.subscribeToTopic("fact").then((value) => print("subscribed"));
+      });
+    //
+    // var messaging = FirebaseMessaging.instance;
+    //   messaging.getToken().then((value){
+    //     var myData = {"token":value};
+    //     var collection = FirebaseFirestore.instance.collection('tokens');
+    //     collection.doc(value).set(myData) // <-- Your data
+    //         .then((_) => print('Added'))
+    //         .catchError((error) => print('Add failed: $error'));
+    //   });
     // print(firstRun);
     //showDefaultSnackbar(_key);
     try {

@@ -3,10 +3,9 @@ import '../functions/functionalities.dart';
 import '../models/News.dart';
 class FavoriteButton extends StatefulWidget {
   final News? news;
-  final int tableIndex;
   final bool removeTile;
   final Function function;
-  FavoriteButton({this.news,required this.tableIndex,required this.removeTile,required this.function});
+  FavoriteButton({this.news,required this.removeTile,required this.function});
   @override
   _FavoriteButtonState createState() => _FavoriteButtonState();
 }
@@ -14,7 +13,6 @@ class FavoriteButton extends StatefulWidget {
 class _FavoriteButtonState extends State<FavoriteButton> {
   @override
   Widget build(BuildContext context) {
-    int tableIndex=widget.tableIndex;
     return InkWell(
       child: Icon(
         widget.removeTile?Icons.remove:Icons.bookmark_border,
@@ -50,7 +48,6 @@ class _FavoriteButtonState extends State<FavoriteButton> {
             if(val=='ok'){Functionalities.favoriteNews.remove(widget.news!.id);
             Functionalities.loadFavorites();
             Functionalities.setFavorites();
-            tableIndex=1;
             };
 
           });
@@ -60,7 +57,6 @@ class _FavoriteButtonState extends State<FavoriteButton> {
             Functionalities.favoriteNews.add(widget.news!.id);
             Functionalities.setFavorites();
             Functionalities.loadFavorites();
-            tableIndex=1;
           });
         }
       }},

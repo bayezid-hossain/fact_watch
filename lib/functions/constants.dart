@@ -80,7 +80,7 @@ Drawer getDrawer(BuildContext context) {
         getNormalRow("হোম", () {Navigator.pop(context);}),
         getNormalRow("তথ্য যাচাই", () {
           Navigator.push(context,
-              MaterialPageRoute(builder: (context) => CategorizedNews(2)));
+              MaterialPageRoute(builder: (context) => CategorizedNews(Functionalities.categories.keys.firstWhere((element) => Functionalities.categories[element]=="তথ্য যাচাই", orElse: ()=>0))));
         }
   ),
         // ExpansionTile(
@@ -101,11 +101,11 @@ Drawer getDrawer(BuildContext context) {
         //   ],
         // ),
         getNormalRow("ফ্যাক্ট ফাইল",(){Navigator.push(context,
-            MaterialPageRoute(builder: (context) => CategorizedNews(3)));}),
+            MaterialPageRoute(builder: (context) => CategorizedNews(Functionalities.categories.keys.firstWhere((element) => Functionalities.categories[element]=="ফ্যাক্ট ফাইল", orElse: ()=>0))));}),
              getNormalRow("স্বাস্থ্য", () {Navigator.push(context,
-                 MaterialPageRoute(builder: (context) => CategorizedNews(14)));}),
+                 MaterialPageRoute(builder: (context) => CategorizedNews(Functionalities.categories.keys.firstWhere((element) => Functionalities.categories[element]=="স্বাস্থ্য", orElse: ()=>0))));}),
         getNormalRow("লেখাজোখা",(){Navigator.push(context,
-            MaterialPageRoute(builder: (context) => CategorizedNews(10)));}),
+            MaterialPageRoute(builder: (context) => CategorizedNews(Functionalities.categories.keys.firstWhere((element) => Functionalities.categories[element]=="লেখাজোখা", orElse: ()=>0))));}),
         ExpansionTile(
           initiallyExpanded: true,
           childrenPadding: EdgeInsets.only(left: 18),
@@ -119,13 +119,13 @@ Drawer getDrawer(BuildContext context) {
           ),
           children: [
             getNormalRow("করোনা তথ্য যাচাই", () {Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CategorizedNews(6)));}, true),
+                MaterialPageRoute(builder: (context) => CategorizedNews(Functionalities.categories.keys.firstWhere((element) => Functionalities.categories[element]=="করোনা তথ্য যাচাই", orElse: ()=>0))));}, true),
             getNormalRow("করোনা ভাক্সিন", () {Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CategorizedNews(9)));}, true),
+                MaterialPageRoute(builder: (context) => CategorizedNews(Functionalities.categories.keys.firstWhere((element) => Functionalities.categories[element]=="করোনা ভাক্সিন", orElse: ()=>0))));}, true),
             getNormalRow("জন উদ্যোগ", () {Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CategorizedNews(7)));}, true),
+                MaterialPageRoute(builder: (context) => CategorizedNews(Functionalities.categories.keys.firstWhere((element) => Functionalities.categories[element]=="জন উদ্যোগ", orElse: ()=>0))));}, true),
             getNormalRow("জরুরি পরামর্শ", () {Navigator.push(context,
-                MaterialPageRoute(builder: (context) => CategorizedNews(8)));}, true),
+                MaterialPageRoute(builder: (context) => CategorizedNews(Functionalities.categories.keys.firstWhere((element) => Functionalities.categories[element]=="জরুরি পরামর্শ", orElse: ()=>0))));}, true),
           ],
         ),
         Divider(
@@ -478,10 +478,11 @@ var ccBangla="""<div class="entry-content">
 <table style="border-collapse: collapse; width: 94.3939%; height: 1365px;">
 <tbody>
 <tr>
-<td style="width: 50.1514%;font-size: 20pt;"><strong>সংশোধন ও অভিযোগ নীতি </strong><p></p>
+<td style="width: 50.1514%;font-size: 18pt;"><b>সংশোধন ও অভিযোগ নীতি </b><p></p>
+<br>
 <p>ফ্যাক্টওয়াচ সর্বদাই তথ্যের নির্ভুলতা ও জবাবদিহিতায় প্রতিশ্রুতিবদ্ধ। কোন প্রতিবেদন প্রকাশের পরে যদি আমরা জানতে পারি, কোথাও কোন ভুল হয়েছে বা কোনকিছু বাদ পড়েছে, সেক্ষেত্রে যথাসম্ভব দ্রুততার সাথে আমরা প্রতিবেদনটি সংশোধন করে থাকি। ফ্যাক্টওয়াচ দল তাদের নিয়মিত সাপ্তাহিক সভায় পূর্ব-প্রকাশিত প্রতিবেদনগুলোর প্রয়োজনীয় সংশোধন বা পরিমার্জন নিয়ে পর্যালোচনা করে।</p>
-<p>কোন প্রতিবেদনে যদি তথ্যের ভুল বা অসম্পূর্ণতা খুঁজে পান, তবে অনুগ্রহপূর্বক ফ্যাক্টওয়াচের সাথে সরাসরি যোগাযোগ করুন। আপনাদের মূল্যবান মতামত, অভিযোগ কিংবা প্রতিক্রিয়া জানাতে ইমেইল করুন&nbsp; <strong>‘</strong><a href="mailto:contact@fact-watch.org"><strong>contact@fact-watch.org</strong></a><strong>’</strong> এই ঠিকানায় অথবা বার্তা দিন ফ্যাক্টওয়াচের <a href="https://www.facebook.com/fwatch.bangladesh"><strong></strong></strong>ফেইসবুক পেইজে</strong></a> কিংবা ইনবক্সে। সম্ভব হলে, প্রাসঙ্গিক এবং উন্মুক্ত ডেটা বা লিংক সেখানে অন্তর্ভুক্ত করুন। নির্ভুল তথ্য প্রকাশে আপনাদের সহযোগিতা আমাদের কাম্য।</p>
-<p><strong>তবে</strong> <strong>&nbsp;</strong><strong>আমাদের কাজের আওতায় কী কী&nbsp; পড়ে না তা অনুগ্রহ করে&nbsp; বিবেচনা করবেন :</strong></p>
+<p>কোন প্রতিবেদনে যদি তথ্যের ভুল বা অসম্পূর্ণতা খুঁজে পান, তবে অনুগ্রহপূর্বক ফ্যাক্টওয়াচের সাথে সরাসরি যোগাযোগ করুন। আপনাদের মূল্যবান মতামত, অভিযোগ কিংবা প্রতিক্রিয়া জানাতে ইমেইল করুন&nbsp; ‘<a href="mailto:contact@fact-watch.org">contact@fact-watch.org</a>’ এই ঠিকানায় অথবা বার্তা দিন ফ্যাক্টওয়াচের <a href="https://www.facebook.com/fwatch.bangladesh"><strong></strong></strong>ফেইসবুক পেইজে</strong></a> কিংবা ইনবক্সে। সম্ভব হলে, প্রাসঙ্গিক এবং উন্মুক্ত ডেটা বা লিংক সেখানে অন্তর্ভুক্ত করুন। নির্ভুল তথ্য প্রকাশে আপনাদের সহযোগিতা আমাদের কাম্য।</p>
+<p><strong>তবে</strong> <strong>&nbsp;</strong><strong> আমাদের কাজের আওতায় কী কী&nbsp; পড়ে না তা অনুগ্রহ করে&nbsp; বিবেচনা করবেন :</strong></p>
 <ul>
 <li>নগন্য ভুল যেমন মুদ্রণপ্রমাদ, বানান ভুল বা বলায় সামান্য ভুল।</li>
 <li>স্পষ্টতই ব্যঙ্গাত্মক বা হাস্যকর বিষয়বস্তু, যেমন রসিকতা/কৌতুক, মিম বা অত্যুক্তি।</li>
@@ -500,7 +501,8 @@ var ccBangla="""<div class="entry-content">
 <p>আমরা তথ্য যাচাইয়ের ধারণাটি জনসাধারণের মাঝে আরও ছড়িয়ে দিতে তাদের প্রতিটি প্রতিক্রিয়ারই জবাব দিতে আগ্রহী। কোন তথ্যটি যাচাইযোগ্য এবং কোনটি নয় সে বিষয়ে আমরা পাঠকদের অবহিত করি এবং কেন নির্দিষ্ট কিছু অভিযোগ, সংশোধন বা তথ্য যাচাইয়ের অনুরোধ আমরা প্রত্যাখ্যাত করি তা প্রাসঙ্গিক নীতিমালা উল্লেখ করে জানিয়ে দেই।</p>
 <p><strong>লেবেলিং </strong></p>
 <p>ত্রুটি সংশোধনের ক্ষেত্রে, প্রতিবেদনে একটি নোট যুক্ত হবে এবং পরিবর্তনের ব্যাখ্যাসহ সে জায়গায় <b>“সংশোধন”</b> লেবেল যুক্ত করা হয়।</p>
-<b>তথ্য আপডেটের ক্ষেত্রেও প্রতিবেদনে একটি নোট যুক্ত হবে এবং পরিবর্তনের ব্যাখ্যাসহ সে জায়গায় <b>“আপডেট”</b> লেবেল যুক্ত করা হয়।</p></td></tr></tbody></table></div>""";
+<br>
+<p>তথ্য আপডেটের ক্ষেত্রেও প্রতিবেদনে একটি নোট যুক্ত হবে এবং পরিবর্তনের ব্যাখ্যাসহ সে জায়গায় <b>“আপডেট”</b> লেবেল যুক্ত করা হয়।</p></td></tr></tbody></table></div>""";
 
 
 
@@ -516,7 +518,7 @@ var ccEnglish="""
 <p>FactWatch is committed to accuracy and accountability. After a report is published, if we discover that we have made a mistake or omission, we will revise our report with full disclosure of the update.&nbsp;The FactWatch team will review previously published material in our weekly meetings for any necessary corrections or updates.</p>
 <p>Furthermore, if YOU find any such issues with our reports, please let us know. We are happy to receive any input that helps us improve our work.</p>
 <p>Please send feedback, corrections or complaints to&nbsp;<strong>‘</strong><a href="mailto:contact@fact-watch.org"><strong>contact@fact-watch.org</strong></a><strong>’</strong>&nbsp;or&nbsp;via&nbsp;<a href="https://www.facebook.com/fwatch.bangladesh"><strong>our facebook page</strong></a>&nbsp;as a message. Whenever possible, include any relevant resources, such as links to reference material or data that is publicly accessible.</p>
-<p>However, please do keep in mind that we do not cover:</p>
+<p><strong>However, please do keep in mind that we do not cover:</strong></p>
 <ul>
 <li>Inconsequential glitches, such as a misspelling or slip of the tongue.</li>
 <li>Content that is clearly sarcastic or humorous, such as jokes, memes or hyperbole.</li>
