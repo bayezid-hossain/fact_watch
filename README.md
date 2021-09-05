@@ -1,6 +1,8 @@
 # fact_watch
 
-A fact checking app
+A fact checking app of FactWatch.org
+
+Apk Link: https://drive.google.com/drive/folders/14zLZ9hZ7grg7ePxzNYU9iHVflPMlcoAy?usp=sharing
 
 ## Getting Started
 
